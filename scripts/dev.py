@@ -1,10 +1,3 @@
-"""Cross-platform development task runner for devspeed.
-
-Examples:
-    python scripts/dev.py format
-    python scripts/dev.py check
-    python scripts/dev.py build
-"""
 
 from __future__ import annotations
 
@@ -23,19 +16,7 @@ BUILD_DIRS = (ROOT / "build", ROOT / "dist", ROOT / "devspeed.egg-info")
 
 
 def run(command: Sequence[str], *, check: bool = True) -> int:
-    """Run a repository command from the project root.
-
-    Args:
-        command: Executable and arguments to run.
-        check: Raise ``SystemExit`` when the command fails.
-
-    Returns:
-        The subprocess return code.
-
-    Raises:
-        SystemExit: If ``check`` is true and the command fails.
-        FileNotFoundError: If the executable cannot be found.
-    """
+    
     printable = " ".join(command)
     print(f"\n$ {printable}")
     completed = subprocess.run(list(command), cwd=ROOT, check=False)
@@ -45,15 +26,7 @@ def run(command: Sequence[str], *, check: bool = True) -> int:
 
 
 def python_module(module: str, *arguments: str) -> list[str]:
-    """Build a command using the current Python interpreter.
-
-    Args:
-        module: Module passed to ``python -m``.
-        arguments: Additional module arguments.
-
-    Returns:
-        A command suitable for :func:`run`.
-    """
+   
     return [sys.executable, "-m", module, *arguments]
 
 
