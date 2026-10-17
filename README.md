@@ -1,4 +1,4 @@
-# ⚡ devspeed by Nidhal Zitouni
+# ⚡ devspeed 
 
 **Spin up a professional local development environment in seconds.**
 
