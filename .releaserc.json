@@ -1,0 +1,23 @@
+{
+  "branches": ["master"],
+  "plugins": [
+    "@semantic-release/commitAnalyzer",
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/changelog",
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "echo 'Updating version in pyproject.toml...'",
+        "verifyCmd": "echo 'Verifying release...'"
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": ["CHANGELOG.md", "pyproject.toml"],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }
+    ],
+    "@semantic-release/github"
+  ]
+}
