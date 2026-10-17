@@ -5,7 +5,8 @@ from __future__ import annotations
 import tempfile
 import unittest
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
+from collections.abc import Mapping
 from unittest.mock import patch
 
 import yaml
