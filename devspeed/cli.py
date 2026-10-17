@@ -7,10 +7,18 @@ import sys
 from collections.abc import Mapping
 from typing import Any
 
+from rich.console import Console
+from rich.table import Table
+from rich.panel import Panel
+from rich.prompt import Prompt, IntPrompt
+from rich import print as rprint
+
 from devspeed import __version__
 from devspeed import config as cfg
 from devspeed.stacks import get_stack, list_stacks
 from devspeed.stacks.common import env_example
+
+console = Console()
 
 GENERATED_COMPOSE = "docker-compose.devspeed.yml"
 GENERATED_ENV = ".env.devspeed"
@@ -18,10 +26,15 @@ GENERATED_ENV_EXAMPLE = ".env.example"
 
 
 def cmd_list(_args: argparse.Namespace) -> None:
-    print("\ndevspeed stacks\n")
+    table = Table(title="⚡ devspeed stacks", show_header=True, header_style="bold magenta")
+    table.add_column("Stack Name", style="cyan", width=24)
+    table.add_column("Description", style="white")
+
     for name, description in list_stacks():
-        print(f"  {name:<24} {description}")
-    print("\nStart one with: devspeed init <stack>")
+        table.add_row(name, description)
+    
+    console.print("\n", table)
+    rprint("\n[bold green]Start one with:[/bold green] [bold]devspeed init <stack>[/bold]")
 
 
 def cmd_init(args: argparse.Namespace) -> None:
@@ -74,25 +87,21 @@ def _create_config(
 
 
 def cmd_create(args: argparse.Namespace) -> None:
-    print("\ndevspeed create\n")
-    print("Choose a stack:")
+    console.print(Panel("[bold cyan]⚡ devspeed create[/bold cyan]\nChoose a stack to initialize your environment", expand=False))
+    
     stacks = list_stacks()
-    for index, (_, description) in enumerate(stacks, start=1):
-        print(f"  {index}. {description}")
-
+    options = [f"{i+1}. {name} - {desc}" for i, (name, desc) in enumerate(stacks)]
+    
     try:
-        selection = input("\nStack [1]: ").strip() or "1"
-        stack_index = int(selection) - 1
-        stack_name = stacks[stack_index][0]
-    except (ValueError, EOFError, IndexError):
-        print("Please choose one of the numbered stacks.")
+        selection = IntPrompt.ask("\nSelect a stack number", choices=[str(i+1) for i in range(len(stacks))], default=1)
+        stack_name = stacks[selection-1][0]
+    except (ValueError, EOFError):
+        rprint("[bold red]Error:[/bold red] Invalid selection. Please run the command again.")
         sys.exit(1)
 
     default_name = pathlib.Path.cwd().name
-    try:
-        project_name = input(f"Project name [{default_name}]: ").strip() or default_name
-    except EOFError:
-        project_name = default_name
+    project_name = Prompt.ask(f"Project name", default=default_name)
+    
     _create_config(stack_name, args.project_name or project_name, args.force, args.dry_run)
 
 
@@ -212,13 +221,17 @@ def cmd_doctor(args: argparse.Namespace) -> None:
                 compose_path.write_text(current_compose, encoding="utf-8")
                 checks.append((True, f"Updated stale {GENERATED_COMPOSE}"))
 
-    print("\ndevspeed doctor\n")
+    console.print(Panel("[bold cyan]🔍 devspeed doctor[/bold cyan]\nChecking system prerequisites", expand=False))
+    
     for passed, message in checks:
-        print(f"  [{'OK' if passed else '!!'}] {message}")
+        status = "[bold green]OK[/bold green]" if passed else "[bold red]!![/bold red]"
+        console.print(f"  {status} {message}")
+        
     if not all(passed for passed, _ in checks):
-        print("\nFix the items marked !!, then run devspeed doctor again.")
+        rprint("\n[bold red]Fix the items marked !!, then run devspeed doctor again.[/bold red]")
         sys.exit(1)
-    print("\nReady. Run devspeed up to start your environment.")
+    
+    rprint("\n[bold green]Ready. Run devspeed up to start your environment.[/bold green]")
 
 
 def _generate_files(config: Mapping[str, Any], write: bool = True):
