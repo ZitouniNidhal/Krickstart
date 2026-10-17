@@ -1,5 +1,5 @@
 import unittest
-from typing import Any
+from typing import Any, Mapping
 from unittest.mock import patch
 
 from devspeed.plugin import (

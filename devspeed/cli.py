@@ -116,6 +116,7 @@ def cmd_validate(_args: argparse.Namespace) -> None:
         print(f"Error: {cfg.CONFIG_FILENAME} not found.")
         sys.exit(1)
 
+    config = cfg.load_config()
     try:
         stack_name = config.get("stack")
         if not isinstance(stack_name, str):
