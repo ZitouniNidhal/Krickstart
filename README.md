@@ -1,8 +1,8 @@
-# ⚡ devspeed
+# ⚡ devspeed by Nidhal Zitouni
 
 **Spin up a professional local development environment in seconds.**
 
-[![Build](https://img.shields.io/github/actions/workflow/status/OWNER/devspeed/ci.yml?branch=main&label=build)](https://github.com/OWNER/devspeed/actions)
+[![Build](https://img.shields.io/github/actions/workflow/status/ZitouniNidhal/devspeed/ci.yml?branch=master&label=build)](https://github.com/ZitouniNidhal/devspeed/actions)
 [![PyPI](https://img.shields.io/pypi/v/devspeed.svg)](https://pypi.org/project/devspeed/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/pypi/pyversions/devspeed.svg)](https://pypi.org/project/devspeed/)

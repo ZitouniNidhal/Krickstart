@@ -117,8 +117,11 @@ def cmd_validate(_args: argparse.Namespace) -> None:
         sys.exit(1)
 
     config = cfg.load_config()
-    stack_name = config.get("stack")
     try:
+        stack_name = config.get("stack")
+        if not isinstance(stack_name, str):
+            print(f"Error: 'stack' must be a string, got {type(stack_name).__name__}")
+            sys.exit(1)
         stack = get_stack(stack_name)
     except KeyError as e:
         print(f"Validation failed: {e}")
@@ -169,7 +172,12 @@ def cmd_doctor(args: argparse.Namespace) -> None:
         if compose_path.exists():
             current_compose = stack.compose_yaml(config)
             if compose_path.read_text(encoding="utf-8") != current_compose:
-                checks.append((False, f"{GENERATED_COMPOSE} is stale (out of sync with {cfg.CONFIG_FILENAME})"))
+                checks.append(
+                    (
+                        False,
+                        f"{GENERATED_COMPOSE} is stale (out of sync with {cfg.CONFIG_FILENAME})",
+                    )
+                )
             else:
                 checks.append((True, f"{GENERATED_COMPOSE} is up to date"))
         else:
@@ -182,7 +190,9 @@ def cmd_doctor(args: argparse.Namespace) -> None:
             if port:
                 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     if s.connect_ex(("localhost", int(port))) == 0:
-                        checks.append((False, f"Port {port} (used by {service}) is already in use on host"))
+                        checks.append(
+                            (False, f"Port {port} (used by {service}) is already in use on host")
+                        )
                         port_conflict = True
         if not port_conflict:
             checks.append((True, "No host port conflicts detected"))
@@ -193,7 +203,7 @@ def cmd_doctor(args: argparse.Namespace) -> None:
         if not example_path.exists():
             example_path.write_text(env_example(stack.env_file(config)), encoding="utf-8")
             checks.append((True, f"Repaired missing {GENERATED_ENV_EXAMPLE}"))
-        
+
         # Repair stale compose file
         compose_path = pathlib.Path(GENERATED_COMPOSE)
         if compose_path.exists():
@@ -209,7 +219,6 @@ def cmd_doctor(args: argparse.Namespace) -> None:
         print("\nFix the items marked !!, then run devspeed doctor again.")
         sys.exit(1)
     print("\nReady. Run devspeed up to start your environment.")
-
 
 
 def _generate_files(config: Mapping[str, Any], write: bool = True):
@@ -326,15 +335,12 @@ def cmd_export(args: argparse.Namespace) -> None:
     print(f"  - Environment file: {env_out}")
 
 
-
 def build_parser():
     parser = argparse.ArgumentParser(
         prog="devspeed",
         description="Spin up a local dev environment from a single config file.",
     )
-    parser.add_argument(
-        "--version", "-v", action="version", version=f"devspeed v{__version__}"
-    )
+    parser.add_argument("--version", "-v", action="version", version=f"devspeed v{__version__}")
     sub = parser.add_subparsers(dest="command", required=True)
 
     p_version = sub.add_parser("version", help="Show devspeed CLI version")
@@ -401,9 +407,7 @@ def build_parser():
     p_export.add_argument(
         "--out", "-o", default="docker-compose.yml", help="Target Compose output path"
     )
-    p_export.add_argument(
-        "--env-out", default=".env", help="Target env output path"
-    )
+    p_export.add_argument("--env-out", default=".env", help="Target env output path")
     p_export.set_defaults(func=cmd_export)
 
     return parser

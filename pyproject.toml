@@ -1,7 +1,7 @@
 [project]
 name = "devspeed"
 version = "0.1.0"
-description = "Lightning-fast local dev environment manager"
+description = "Lightning-fast local dev environment manager by Nidhal Zitouni"
 requires-python = ">=3.9"
 dependencies = [
     "pyyaml>=6.0",
@@ -13,6 +13,7 @@ dev = [
     "build>=1.2",
     "mypy>=1.10",
     "ruff>=0.6",
+    "types-PyYAML",
 ]
 
 [project.scripts]
@@ -37,3 +38,6 @@ line-length = 100
 [tool.ruff]
 line-length = 100
 target-version = "py39"
+
+[tool.mypy]
+ignore_missing_imports = true
