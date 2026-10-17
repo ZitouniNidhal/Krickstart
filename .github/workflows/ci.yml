@@ -60,7 +60,7 @@ jobs:
           pip install .[dev] pytest
 
       - name: Run Unit Tests
-        run: pytest tests/
+        run: pytest tests/ --cov=devspeed --cov-report=xml
 
   integration:
     name: Integration Tests
