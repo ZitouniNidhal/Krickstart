@@ -123,7 +123,11 @@ We love contributions! Whether it's a new stack template, a bug fix, or document
 - 🛠️ **Build a plugin** and share your custom stack with the community.
 - 📝 **Improve docs** to help other developers get started faster.
 
-## 📖 Deep Dive & Guides
+## 📖 Guides
+For detailed instructions, explore our documentation:
+- [🚀 Getting Started](./docs/getting-started.md) - From installation to your first stack.
+- [🛠️ Custom Stacks](./docs/custom-stacks.md) - How to extend devspeed with your own templates.
+- [🔍 Troubleshooting](./docs/troubleshooting.md) - Solving common Docker and config issues.
 
 ### Team Workflow
 `devspeed.yaml` is the source of truth. Commit it to your repo so every teammate uses the same environment.
