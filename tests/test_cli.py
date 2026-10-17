@@ -204,7 +204,6 @@ class CliTests(unittest.TestCase):
             finally:
                 os.chdir(original_directory)
 
-
     def test_cmd_export_writes_standalone_files(self):
         with tempfile.TemporaryDirectory() as directory:
             original_directory = Path.cwd()
