@@ -1,7 +1,7 @@
 [project]
 name = "devspeed"
 version = "0.1.0"
-description = "Lightning-fast local dev environment manager"
+description = "Lightning-fast local dev environment manager by Nidhal Zitouni"
 requires-python = ">=3.9"
 dependencies = [
     "pyyaml>=6.0",
