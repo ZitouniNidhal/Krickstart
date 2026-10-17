@@ -116,9 +116,11 @@ def cmd_validate(_args: argparse.Namespace) -> None:
         print(f"Error: {cfg.CONFIG_FILENAME} not found.")
         sys.exit(1)
 
-    config = cfg.load_config()
-    stack_name = config.get("stack")
     try:
+        stack_name = config.get("stack")
+        if not isinstance(stack_name, str):
+            print(f"Error: 'stack' must be a string, got {type(stack_name).__name__}")
+            sys.exit(1)
         stack = get_stack(stack_name)
     except KeyError as e:
         print(f"Validation failed: {e}")

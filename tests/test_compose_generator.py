@@ -41,15 +41,15 @@ class InvalidYamlPlugin(StackPlugin):
         """Return a minimal test configuration."""
         return {"project": project_name, "stack": self.name, "services": {"app": {}}}
 
-    def compose_yaml(self, config: dict[str, Any]) -> str:
+    def compose_yaml(self, config: Mapping[str, Any]) -> str:
         """Return intentionally malformed YAML."""
         return "services: ["
 
-    def env_file(self, config: dict[str, Any]) -> str:
+    def env_file(self, config: Mapping[str, Any]) -> str:
         """Return a valid environment value."""
         return "VALUE=test\n"
 
-    def post_up_hints(self, config: dict[str, Any]) -> list[str]:
+    def post_up_hints(self, config: Mapping[str, Any]) -> list[str]:
         """Return no startup hints."""
         return []
 
@@ -62,11 +62,11 @@ class EmptyEnvPlugin(InvalidYamlPlugin):
         """Return the empty environment test identifier."""
         return "empty-env"
 
-    def compose_yaml(self, config: dict[str, Any]) -> str:
+    def compose_yaml(self, config: Mapping[str, Any]) -> str:
         """Return valid minimal Compose YAML."""
         return "services:\n  app:\n    image: test\n"
 
-    def env_file(self, config: dict[str, Any]) -> str:
+    def env_file(self, config: Mapping[str, Any]) -> str:
         """Return an invalid empty environment file."""
         return ""
 

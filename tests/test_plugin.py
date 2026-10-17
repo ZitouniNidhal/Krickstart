@@ -20,13 +20,13 @@ class ExamplePlugin(StackPlugin):
     def default_config(self, project_name: str) -> dict[str, Any]:
         return {"project": project_name, "stack": self.name, "services": {}}
 
-    def compose_yaml(self, config: dict[str, Any]) -> str:
+    def compose_yaml(self, config: Mapping[str, Any]) -> str:
         return "services: {}"
 
-    def env_file(self, config: dict[str, Any]) -> str:
+    def env_file(self, config: Mapping[str, Any]) -> str:
         return ""
 
-    def post_up_hints(self, config: dict[str, Any]) -> list[str]:
+    def post_up_hints(self, config: Mapping[str, Any]) -> list[str]:
         return []
 
 
