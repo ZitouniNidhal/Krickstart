@@ -1,6 +1,6 @@
 import unittest
-from typing import Any
 from collections.abc import Mapping
+from typing import Any
 from unittest.mock import patch
 
 from devspeed.plugin import (

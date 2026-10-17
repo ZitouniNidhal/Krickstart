@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import tempfile
 import unittest
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
-from collections.abc import Mapping
 from unittest.mock import patch
 
 import yaml
