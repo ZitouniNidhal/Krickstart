@@ -6,9 +6,11 @@ from collections.abc import Mapping
 from typing import Any
 
 from devspeed.plugins.base import StackPlugin
+
 from .common import lifecycle_command
 
-class ExpressMongoPlugin(StackPlugin):
+
+class ExpressMongodbPlugin(StackPlugin):
     """Provide a Node.js Express application with MongoDB."""
 
     @property
@@ -58,15 +60,15 @@ name: {project}
 
 services:
   app:
-    image: node:{app['node_version']}-slim
+    image: node:{app["node_version"]}-slim
     working_dir: /app
     volumes:
       - ./:/app
     command: {command}
     ports:
-      - "{app['port']}:{app['port']}"
+      - "{app["port"]}:{app["port"]}"
     environment:
-      - MONGODB_URI=mongodb://{mongo['user']}:{mongo['password']}@mongodb:27017/devspeed_db?authSource=admin
+      - MONGODB_URI=mongodb://{mongo["user"]}:{mongo["password"]}@mongodb:27017/devspeed_db?authSource=admin
     depends_on:
       mongodb:
         condition: service_healthy
@@ -74,10 +76,10 @@ services:
   mongodb:
     image: mongo:6-alpine
     ports:
-      - "{mongo['port']}:27017"
+      - "{mongo["port"]}:27017"
     environment:
-      - MONGO_INITDB_ROOT_USERNAME={mongo['user']}
-      - MONGO_INITDB_ROOT_PASSWORD={mongo['password']}
+      - MONGO_INITDB_ROOT_USERNAME={mongo["user"]}
+      - MONGO_INITDB_ROOT_PASSWORD={mongo["password"]}
     healthcheck:
       test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
       interval: 3s
@@ -100,21 +102,27 @@ volumes:
             "Make sure app.js is configured to use MONGODB_URI.",
         ]
 
-plugin = ExpressMongoPlugin()
+
+plugin = ExpressMongodbPlugin()
 NAME = plugin.name
 DESCRIPTION = plugin.description
+
 
 def default_config(project_name: str) -> dict[str, Any]:
     return plugin.default_config(project_name)
 
+
 def starter_files(config: Mapping[str, Any]) -> dict[str, str]:
     return plugin.starter_files(config)
+
 
 def compose_yaml(config: Mapping[str, Any]) -> str:
     return plugin.compose_yaml(config)
 
+
 def env_file(config: Mapping[str, Any]) -> str:
     return plugin.env_file(config)
+
 
 def post_up_hints(config: Mapping[str, Any]) -> list[str]:
     return plugin.post_up_hints(config)

@@ -6,7 +6,9 @@ from collections.abc import Mapping
 from typing import Any
 
 from devspeed.plugins.base import StackPlugin
+
 from .common import lifecycle_command
+
 
 class SpringBootMysqlPlugin(StackPlugin):
     """Provide a Java Spring Boot application with MySQL."""
@@ -59,17 +61,17 @@ name: {project}
 
 services:
   app:
-    image: eclipse-temurin:{app['java_version']}-jdk-alpine
+    image: eclipse-temurin:{app["java_version"]}-jdk-alpine
     working_dir: /app
     volumes:
       - ./:/app
     command: {command}
     ports:
-      - "{app['port']}:{app['port']}"
+      - "{app["port"]}:{app["port"]}"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/{mysql['db']}
-      - SPRING_DATASOURCE_USERNAME={mysql['user']}
-      - SPRING_DATASOURCE_PASSWORD={mysql['password']}
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/{mysql["db"]}
+      - SPRING_DATASOURCE_USERNAME={mysql["user"]}
+      - SPRING_DATASOURCE_PASSWORD={mysql["password"]}
     depends_on:
       mysql:
         condition: service_healthy
@@ -77,12 +79,12 @@ services:
   mysql:
     image: mysql:8.0
     ports:
-      - "{mysql['port']}:3306"
+      - "{mysql["port"]}:3306"
     environment:
-      - MYSQL_DATABASE={mysql['db']}
-      - MYSQL_ROOT_PASSWORD={mysql['password']}
-      - MYSQL_USER={mysql['user']}
-      - MYSQL_PASSWORD={mysql['password']}
+      - MYSQL_DATABASE={mysql["db"]}
+      - MYSQL_ROOT_PASSWORD={mysql["password"]}
+      - MYSQL_USER={mysql["user"]}
+      - MYSQL_PASSWORD={mysql["password"]}
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 3s
@@ -105,21 +107,27 @@ volumes:
             "Make sure you have the Maven wrapper (mvnw) in your project root.",
         ]
 
+
 plugin = SpringBootMysqlPlugin()
 NAME = plugin.name
 DESCRIPTION = plugin.description
 
+
 def default_config(project_name: str) -> dict[str, Any]:
     return plugin.default_config(project_name)
+
 
 def starter_files(config: Mapping[str, Any]) -> dict[str, str]:
     return plugin.starter_files(config)
 
+
 def compose_yaml(config: Mapping[str, Any]) -> str:
     return plugin.compose_yaml(config)
 
+
 def env_file(config: Mapping[str, Any]) -> str:
     return plugin.env_file(config)
+
 
 def post_up_hints(config: Mapping[str, Any]) -> list[str]:
     return plugin.post_up_hints(config)

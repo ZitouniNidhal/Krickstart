@@ -176,7 +176,7 @@ class FlaskPostgresPlugin(StackPlugin):
         """Return starter files for a minimal Flask API."""
         return {
             "requirements.txt": "Flask>=3.1,<4\npsycopg[binary]>=3.2,<4\n",
-            "app.py": '''from flask import Flask, jsonify
+            "app.py": """from flask import Flask, jsonify
 
 app = Flask(__name__)
 
@@ -184,7 +184,7 @@ app = Flask(__name__)
 @app.get("/")
 def read_root():
     return jsonify(message="Your DevSpeed app is running")
-''',
+""",
         }
 
     def compose_yaml(self, config: Mapping[str, Any]) -> str:
@@ -203,15 +203,15 @@ name: {project}
 
 services:
   app:
-    image: python:{app['python_version']}-slim
+    image: python:{app["python_version"]}-slim
     working_dir: /app
     volumes:
       - ./:/app
     command: {command}
     ports:
-      - "{app['port']}:{app['port']}"
+      - "{app["port"]}:{app["port"]}"
     environment:
-      - DATABASE_URL=postgresql://{postgres['user']}:{postgres['password']}@postgres:5432/{postgres['db']}
+      - DATABASE_URL=postgresql://{postgres["user"]}:{postgres["password"]}@postgres:5432/{postgres["db"]}
     depends_on:
       postgres:
         condition: service_healthy

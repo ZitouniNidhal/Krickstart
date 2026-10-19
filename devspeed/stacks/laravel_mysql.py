@@ -6,7 +6,9 @@ from collections.abc import Mapping
 from typing import Any
 
 from devspeed.plugins.base import StackPlugin
+
 from .common import lifecycle_command
+
 
 class LaravelMysqlPlugin(StackPlugin):
     """Provide a PHP Laravel application with MySQL."""
@@ -59,18 +61,18 @@ name: {project}
 
 services:
   app:
-    image: php:{app['php_version']}-alpine
+    image: php:{app["php_version"]}-alpine
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html
     command: {command}
     ports:
-      - "{app['port']}:8000"
+      - "{app["port"]}:8000"
     environment:
       - DB_HOST=mysql
-      - DB_DATABASE={mysql['db']}
-      - DB_USERNAME={mysql['user']}
-      - DB_PASSWORD={mysql['password']}
+      - DB_DATABASE={mysql["db"]}
+      - DB_USERNAME={mysql["user"]}
+      - DB_PASSWORD={mysql["password"]}
     depends_on:
       mysql:
         condition: service_healthy
@@ -78,12 +80,12 @@ services:
   mysql:
     image: mysql:8.0
     ports:
-      - "{mysql['port']}:3306"
+      - "{mysql["port"]}:3306"
     environment:
-      - MYSQL_DATABASE={mysql['db']}
-      - MYSQL_ROOT_PASSWORD={mysql['password']}
-      - MYSQL_USER={mysql['user']}
-      - MYSQL_PASSWORD={mysql['password']}
+      - MYSQL_DATABASE={mysql["db"]}
+      - MYSQL_ROOT_PASSWORD={mysql["password"]}
+      - MYSQL_USER={mysql["user"]}
+      - MYSQL_PASSWORD={mysql["password"]}
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 3s
@@ -106,21 +108,27 @@ volumes:
             "Make sure you have a valid Laravel project structure.",
         ]
 
+
 plugin = LaravelMysqlPlugin()
 NAME = plugin.name
 DESCRIPTION = plugin.description
 
+
 def default_config(project_name: str) -> dict[str, Any]:
     return plugin.default_config(project_name)
+
 
 def starter_files(config: Mapping[str, Any]) -> dict[str, str]:
     return plugin.starter_files(config)
 
+
 def compose_yaml(config: Mapping[str, Any]) -> str:
     return plugin.compose_yaml(config)
 
+
 def env_file(config: Mapping[str, Any]) -> str:
     return plugin.env_file(config)
+
 
 def post_up_hints(config: Mapping[str, Any]) -> list[str]:
     return plugin.post_up_hints(config)

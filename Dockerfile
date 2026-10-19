@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install the project
 COPY pyproject.toml .
+COPY devspeed/ devspeed/
 RUN pip install --no-cache-dir .
 
 # Create a non-root user for security

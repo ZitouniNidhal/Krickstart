@@ -7,11 +7,11 @@ import sys
 from collections.abc import Mapping
 from typing import Any
 
-from rich.console import Console
-from rich.table import Table
-from rich.panel import Panel
-from rich.prompt import Prompt, IntPrompt
 from rich import print as rprint
+from rich.console import Console
+from rich.panel import Panel
+from rich.prompt import IntPrompt, Prompt
+from rich.table import Table
 
 from devspeed import __version__
 from devspeed import config as cfg
@@ -37,7 +37,7 @@ def cmd_list(_args: argparse.Namespace) -> None:
 
     for name, description in list_stacks():
         table.add_row(name, description)
-    
+
     console.print("\n", table)
     rprint("\n[bold green]Start one with:[/bold green] [bold]devspeed init <stack>[/bold]")
 
@@ -92,21 +92,27 @@ def _create_config(
 
 
 def cmd_create(args: argparse.Namespace) -> None:
-    console.print(Panel("[bold cyan]⚡ devspeed create[/bold cyan]\nChoose a stack to initialize your environment", expand=False))
-    
+    console.print(
+        Panel(
+            "[bold cyan]⚡ devspeed create[/bold cyan]\nChoose a stack to initialize your environment",
+            expand=False,
+        )
+    )
+
     stacks = list_stacks()
-    options = [f"{i+1}. {name} - {desc}" for i, (name, desc) in enumerate(stacks)]
-    
+
     try:
-        selection = IntPrompt.ask("\nSelect a stack number", choices=[str(i+1) for i in range(len(stacks))], default=1)
-        stack_name = stacks[selection-1][0]
+        selection = IntPrompt.ask(
+            "\nSelect a stack number", choices=[str(i + 1) for i in range(len(stacks))], default=1
+        )
+        stack_name = stacks[selection - 1][0]
     except (ValueError, EOFError):
         rprint("[bold red]Error:[/bold red] Invalid selection. Please run the command again.")
         sys.exit(1)
 
     default_name = pathlib.Path.cwd().name
-    project_name = Prompt.ask(f"Project name", default=default_name)
-    
+    project_name = Prompt.ask("Project name", default=default_name)
+
     _create_config(stack_name, args.project_name or project_name, args.force, args.dry_run)
 
 
@@ -219,7 +225,7 @@ def cmd_doctor(args: argparse.Namespace) -> None:
             checks.append((False, f"Low disk space: {free_gb:.2f} GB remaining (warn below 2 GB)"))
         else:
             checks.append((True, f"Sufficient disk space: {free_gb:.2f} GB remaining"))
-    except Exception as e:
+    except (OSError, PermissionError) as e:
         checks.append((False, f"Could not check disk space: {e}"))
 
     if getattr(args, "fix", False) and config and stack:
@@ -237,8 +243,12 @@ def cmd_doctor(args: argparse.Namespace) -> None:
                 compose_path.write_text(current_compose, encoding="utf-8")
                 checks.append((True, f"Updated stale {GENERATED_COMPOSE}"))
 
-    console.print(Panel("[bold cyan]🔍 devspeed doctor[/bold cyan]\nChecking system prerequisites", expand=False))
-    
+    console.print(
+        Panel(
+            "[bold cyan]🔍 devspeed doctor[/bold cyan]\nChecking system prerequisites", expand=False
+        )
+    )
+
     # Use a rich table for the results
     table = Table(show_header=True, header_style="bold magenta")
     table.add_column("Status", width=10)
@@ -252,13 +262,13 @@ def cmd_doctor(args: argparse.Namespace) -> None:
         table.add_row(status, message, hint)
         if not passed:
             all_passed = False
-            
+
     console.print(table)
-    
+
     if not all_passed:
         rprint("\n[bold red]Fix the items marked !!, then run devspeed doctor again.[/bold red]")
         sys.exit(1)
-    
+
     rprint("\n[bold green]Ready. Run devspeed up to start your environment.[/bold green]")
 
 
@@ -289,7 +299,7 @@ def cmd_up(args: argparse.Namespace) -> None:
     except ConfigNotFoundError as e:
         raise ConfigNotFoundError(
             f"Configuration file {cfg.CONFIG_FILENAME} not found.",
-            hint="Run `devspeed init <stack>` first."
+            hint="Run `devspeed init <stack>` first.",
         ) from e
     stack = _generate_files(config, write=not args.dry_run)
     if args.dry_run:
@@ -329,8 +339,7 @@ def cmd_down(_args: argparse.Namespace) -> None:
 def _require_compose_file() -> None:
     if not pathlib.Path(GENERATED_COMPOSE).exists():
         raise ConfigNotFoundError(
-            f"No generated Compose file found.",
-            hint="Run `devspeed up` first."
+            "No generated Compose file found.", hint="Run `devspeed up` first."
         )
 
 
@@ -340,8 +349,7 @@ def cmd_status(_args: argparse.Namespace) -> None:
         _require_compose_file()
     except ConfigNotFoundError as e:
         raise ConfigNotFoundError(
-            f"No generated Compose file found.",
-            hint="Run `devspeed up` first."
+            "No generated Compose file found.", hint="Run `devspeed up` first."
         ) from e
     result = subprocess.run(["docker", "compose", "-f", GENERATED_COMPOSE, "ps"], check=False)
     sys.exit(result.returncode)
@@ -353,8 +361,7 @@ def cmd_logs(args: argparse.Namespace) -> None:
         _require_compose_file()
     except ConfigNotFoundError as e:
         raise ConfigNotFoundError(
-            f"No generated Compose file found.",
-            hint="Run `devspeed up` first."
+            "No generated Compose file found.", hint="Run `devspeed up` first."
         ) from e
     command = ["docker", "compose", "-f", GENERATED_COMPOSE, "logs"]
     if args.follow:
@@ -401,7 +408,9 @@ def build_parser():
         prog="devspeed",
         description="Spin up a local dev environment from a single config file.",
     )
-    parser.add_argument("--debug", action="store_true", help="Show full traceback on unexpected errors")
+    parser.add_argument(
+        "--debug", action="store_true", help="Show full traceback on unexpected errors"
+    )
     parser.add_argument("--version", "-v", action="version", version=f"devspeed v{__version__}")
     sub = parser.add_subparsers(dest="command", required=True)
 
@@ -478,7 +487,7 @@ def build_parser():
 def main() -> None:
     parser = build_parser()
     args = parser.parse_args()
-    
+
     try:
         args.func(args)
     except KeyboardInterrupt:
@@ -489,9 +498,10 @@ def main() -> None:
         if e.hint:
             console.print(f"[dim]{e.hint}[/dim]")
         sys.exit(e.exit_code)
-    except Exception as e:
+    except (RuntimeError, SystemError) as e:
         if getattr(args, "debug", False):
             import traceback
+
             traceback.print_exc()
         else:
             rprint(f"[bold red]Unexpected error:[/bold red] {e}")

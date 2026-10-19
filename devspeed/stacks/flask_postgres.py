@@ -75,15 +75,15 @@ name: {project}
 
 services:
   app:
-    image: python:{app['python_version']}-slim
+    image: python:{app["python_version"]}-slim
     working_dir: /app
     volumes:
       - ./:/app
     command: {command}
     ports:
-      - "{app['port']}:{app['port']}"
+      - "{app["port"]}:{app["port"]}"
     environment:
-      - DATABASE_URL=postgresql://{postgres['user']}:{postgres['password']}@postgres:5432/{postgres['db']}
+      - DATABASE_URL=postgresql://{postgres["user"]}:{postgres["password"]}@postgres:5432/{postgres["db"]}
     depends_on:
       postgres:
         condition: service_healthy

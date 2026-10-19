@@ -78,16 +78,16 @@ name: {project}
 
 services:
   app:
-    image: node:{app['node_version']}-alpine
+    image: node:{app["node_version"]}-alpine
     working_dir: /app
     volumes:
       - ./:/app
     command: {app_command}
     ports:
-      - "{app['port']}:{app['port']}"
+      - "{app["port"]}:{app["port"]}"
     environment:
-      - PORT={app['port']}
-      - DATABASE_URL=postgres://{postgres['user']}:{postgres['password']}@postgres:5432/{postgres['db']}
+      - PORT={app["port"]}
+      - DATABASE_URL=postgres://{postgres["user"]}:{postgres["password"]}@postgres:5432/{postgres["db"]}
       - REDIS_URL=redis://redis:6379
     depends_on:
       postgres:
@@ -98,15 +98,15 @@ services:
   postgres:
     image: postgres:16-alpine
     ports:
-      - "{postgres['port']}:5432"
+      - "{postgres["port"]}:5432"
     environment:
-      - POSTGRES_DB={postgres['db']}
-      - POSTGRES_USER={postgres['user']}
-      - POSTGRES_PASSWORD={postgres['password']}
+      - POSTGRES_DB={postgres["db"]}
+      - POSTGRES_USER={postgres["user"]}
+      - POSTGRES_PASSWORD={postgres["password"]}
     volumes:
       - {project}_pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U {postgres['user']}"]
+      test: ["CMD-SHELL", "pg_isready -U {postgres["user"]}"]
       interval: 3s
       timeout: 3s
       retries: 10
@@ -114,7 +114,7 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - "{redis['port']}:6379"
+      - "{redis["port"]}:6379"
 
 volumes:
   {project}_pgdata:
@@ -126,9 +126,9 @@ volumes:
         postgres = services["postgres"]
         app = services["app"]
         return f"""\
-PORT={app['port']}
-DATABASE_URL=postgres://{postgres['user']}:{postgres['password']}@localhost:{postgres['port']}/{postgres['db']}
-REDIS_URL=redis://localhost:{services['redis']['port']}
+PORT={app["port"]}
+DATABASE_URL=postgres://{postgres["user"]}:{postgres["password"]}@localhost:{postgres["port"]}/{postgres["db"]}
+REDIS_URL=redis://localhost:{services["redis"]["port"]}
 """
 
     def post_up_hints(self, config: Mapping[str, Any]) -> list[str]:
