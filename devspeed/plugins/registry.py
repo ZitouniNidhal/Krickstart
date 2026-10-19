@@ -124,6 +124,13 @@ def builtin_registry() -> PluginRegistry:
     registry.register(NextjsPostgresPlugin())
     registry.register(NodePostgresRedisPlugin())
     registry.register(SpringBootPostgresPlugin())
+    from devspeed.stacks.express_mongodb import ExpressMongodbPlugin
+    from devspeed.stacks.laravel_mysql import LaravelMysqlPlugin
+    from devspeed.stacks.spring_boot_mysql import SpringBootMysqlPlugin
+
+    registry.register(ExpressMongodbPlugin())
+    registry.register(SpringBootMysqlPlugin())
+    registry.register(LaravelMysqlPlugin())
     return registry
 
 

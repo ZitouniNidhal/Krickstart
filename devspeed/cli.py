@@ -7,10 +7,23 @@ import sys
 from collections.abc import Mapping
 from typing import Any
 
+from rich import print as rprint
+from rich.console import Console
+from rich.panel import Panel
+from rich.prompt import IntPrompt, Prompt
+from rich.table import Table
+
 from devspeed import __version__
 from devspeed import config as cfg
+from devspeed.errors import (
+    ConfigNotFoundError,
+    DevspeedError,
+    DockerNotFoundError,
+)
 from devspeed.stacks import get_stack, list_stacks
 from devspeed.stacks.common import env_example
+
+console = Console()
 
 GENERATED_COMPOSE = "docker-compose.devspeed.yml"
 GENERATED_ENV = ".env.devspeed"
@@ -18,10 +31,15 @@ GENERATED_ENV_EXAMPLE = ".env.example"
 
 
 def cmd_list(_args: argparse.Namespace) -> None:
-    print("\ndevspeed stacks\n")
+    table = Table(title="⚡ devspeed stacks", show_header=True, header_style="bold magenta")
+    table.add_column("Stack Name", style="cyan", width=24)
+    table.add_column("Description", style="white")
+
     for name, description in list_stacks():
-        print(f"  {name:<24} {description}")
-    print("\nStart one with: devspeed init <stack>")
+        table.add_row(name, description)
+
+    console.print("\n", table)
+    rprint("\n[bold green]Start one with:[/bold green] [bold]devspeed init <stack>[/bold]")
 
 
 def cmd_init(args: argparse.Namespace) -> None:
@@ -74,40 +92,41 @@ def _create_config(
 
 
 def cmd_create(args: argparse.Namespace) -> None:
-    print("\ndevspeed create\n")
-    print("Choose a stack:")
+    console.print(
+        Panel(
+            "[bold cyan]⚡ devspeed create[/bold cyan]\nChoose a stack to initialize your environment",
+            expand=False,
+        )
+    )
+
     stacks = list_stacks()
-    for index, (_, description) in enumerate(stacks, start=1):
-        print(f"  {index}. {description}")
 
     try:
-        selection = input("\nStack [1]: ").strip() or "1"
-        stack_index = int(selection) - 1
-        stack_name = stacks[stack_index][0]
-    except (ValueError, EOFError, IndexError):
-        print("Please choose one of the numbered stacks.")
+        selection = IntPrompt.ask(
+            "\nSelect a stack number", choices=[str(i + 1) for i in range(len(stacks))], default=1
+        )
+        stack_name = stacks[selection - 1][0]
+    except (ValueError, EOFError):
+        rprint("[bold red]Error:[/bold red] Invalid selection. Please run the command again.")
         sys.exit(1)
 
     default_name = pathlib.Path.cwd().name
-    try:
-        project_name = input(f"Project name [{default_name}]: ").strip() or default_name
-    except EOFError:
-        project_name = default_name
+    project_name = Prompt.ask("Project name", default=default_name)
+
     _create_config(stack_name, args.project_name or project_name, args.force, args.dry_run)
 
 
 def _require_docker() -> None:
     if shutil.which("docker") is None:
-        print(
+        raise DockerNotFoundError(
             "Docker not detected. Install Docker Desktop from "
             "https://www.docker.com/products/docker-desktop/ and make sure "
             "'docker compose' works, then try again."
         )
-        sys.exit(1)
 
 
 def cmd_version(_args: argparse.Namespace) -> None:
-    print(f"devspeed v{__version__}")
+    rprint(f"devspeed v{__version__}")
 
 
 def cmd_validate(_args: argparse.Namespace) -> None:
@@ -151,8 +170,9 @@ def cmd_doctor(args: argparse.Namespace) -> None:
         config = cfg.load_config()
         stack = get_stack(config["stack"])
         checks.append((True, f"{cfg.CONFIG_FILENAME} is valid ({config['stack']})"))
-    except (SystemExit, KeyError):
-        checks.append((False, f"{cfg.CONFIG_FILENAME} is missing or invalid"))
+    except (DevspeedError, KeyError) as e:
+        msg = str(e) if not isinstance(e, DevspeedError) else e.message
+        checks.append((False, f"{cfg.CONFIG_FILENAME} is missing or invalid: {msg}"))
 
     docker_path = shutil.which("docker")
     if not docker_path:
@@ -197,6 +217,17 @@ def cmd_doctor(args: argparse.Namespace) -> None:
         if not port_conflict:
             checks.append((True, "No host port conflicts detected"))
 
+    # Check for free disk space (warn below 2 GB)
+    try:
+        usage = shutil.disk_usage(".")
+        free_gb = usage.free / (1024**3)
+        if free_gb < 2:
+            checks.append((False, f"Low disk space: {free_gb:.2f} GB remaining (warn below 2 GB)"))
+        else:
+            checks.append((True, f"Sufficient disk space: {free_gb:.2f} GB remaining"))
+    except (OSError, PermissionError) as e:
+        checks.append((False, f"Could not check disk space: {e}"))
+
     if getattr(args, "fix", False) and config and stack:
         # Repair .env.example
         example_path = pathlib.Path(GENERATED_ENV_EXAMPLE)
@@ -212,13 +243,33 @@ def cmd_doctor(args: argparse.Namespace) -> None:
                 compose_path.write_text(current_compose, encoding="utf-8")
                 checks.append((True, f"Updated stale {GENERATED_COMPOSE}"))
 
-    print("\ndevspeed doctor\n")
+    console.print(
+        Panel(
+            "[bold cyan]🔍 devspeed doctor[/bold cyan]\nChecking system prerequisites", expand=False
+        )
+    )
+
+    # Use a rich table for the results
+    table = Table(show_header=True, header_style="bold magenta")
+    table.add_column("Status", width=10)
+    table.add_column("Check")
+    table.add_column("Hint", style="dim")
+
+    all_passed = True
     for passed, message in checks:
-        print(f"  [{'OK' if passed else '!!'}] {message}")
-    if not all(passed for passed, _ in checks):
-        print("\nFix the items marked !!, then run devspeed doctor again.")
+        status = "[bold green]OK[/bold green]" if passed else "[bold red]!![/bold red]"
+        hint = "" if passed else "Check Docker/Config"
+        table.add_row(status, message, hint)
+        if not passed:
+            all_passed = False
+
+    console.print(table)
+
+    if not all_passed:
+        rprint("\n[bold red]Fix the items marked !!, then run devspeed doctor again.[/bold red]")
         sys.exit(1)
-    print("\nReady. Run devspeed up to start your environment.")
+
+    rprint("\n[bold green]Ready. Run devspeed up to start your environment.[/bold green]")
 
 
 def _generate_files(config: Mapping[str, Any], write: bool = True):
@@ -243,7 +294,13 @@ def _generate_files(config: Mapping[str, Any], write: bool = True):
 
 def cmd_up(args: argparse.Namespace) -> None:
     _require_docker()
-    config = cfg.load_config()
+    try:
+        config = cfg.load_config()
+    except ConfigNotFoundError as e:
+        raise ConfigNotFoundError(
+            f"Configuration file {cfg.CONFIG_FILENAME} not found.",
+            hint="Run `devspeed init <stack>` first.",
+        ) from e
     stack = _generate_files(config, write=not args.dry_run)
     if args.dry_run:
         print("\n[dry-run] Docker Compose was not started.")
@@ -281,20 +338,31 @@ def cmd_down(_args: argparse.Namespace) -> None:
 
 def _require_compose_file() -> None:
     if not pathlib.Path(GENERATED_COMPOSE).exists():
-        print("No generated Compose file found. Run 'devspeed up' first.")
-        sys.exit(1)
+        raise ConfigNotFoundError(
+            "No generated Compose file found.", hint="Run `devspeed up` first."
+        )
 
 
 def cmd_status(_args: argparse.Namespace) -> None:
     _require_docker()
-    _require_compose_file()
+    try:
+        _require_compose_file()
+    except ConfigNotFoundError as e:
+        raise ConfigNotFoundError(
+            "No generated Compose file found.", hint="Run `devspeed up` first."
+        ) from e
     result = subprocess.run(["docker", "compose", "-f", GENERATED_COMPOSE, "ps"], check=False)
     sys.exit(result.returncode)
 
 
 def cmd_logs(args: argparse.Namespace) -> None:
     _require_docker()
-    _require_compose_file()
+    try:
+        _require_compose_file()
+    except ConfigNotFoundError as e:
+        raise ConfigNotFoundError(
+            "No generated Compose file found.", hint="Run `devspeed up` first."
+        ) from e
     command = ["docker", "compose", "-f", GENERATED_COMPOSE, "logs"]
     if args.follow:
         command.append("--follow")
@@ -339,6 +407,9 @@ def build_parser():
     parser = argparse.ArgumentParser(
         prog="devspeed",
         description="Spin up a local dev environment from a single config file.",
+    )
+    parser.add_argument(
+        "--debug", action="store_true", help="Show full traceback on unexpected errors"
     )
     parser.add_argument("--version", "-v", action="version", version=f"devspeed v{__version__}")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -416,7 +487,26 @@ def build_parser():
 def main() -> None:
     parser = build_parser()
     args = parser.parse_args()
-    args.func(args)
+
+    try:
+        args.func(args)
+    except KeyboardInterrupt:
+        rprint("\n[bold yellow]Operation cancelled by user.[/bold yellow]")
+        sys.exit(130)
+    except DevspeedError as e:
+        console.print(f"[bold red]Error:[/bold red] {e.message}")
+        if e.hint:
+            console.print(f"[dim]{e.hint}[/dim]")
+        sys.exit(e.exit_code)
+    except (RuntimeError, SystemError) as e:
+        if getattr(args, "debug", False):
+            import traceback
+
+            traceback.print_exc()
+        else:
+            rprint(f"[bold red]Unexpected error:[/bold red] {e}")
+            rprint("[dim]Run with --debug for the full traceback[/dim]")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

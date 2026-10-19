@@ -106,25 +106,23 @@ class CliTests(unittest.TestCase):
                 os.chdir(original_directory)
 
     def test_missing_docker_message_is_actionable(self):
-        with patch("devspeed.cli.shutil.which", return_value=None), self.assertRaises(SystemExit):
-            output = StringIO()
-            with redirect_stdout(output):
-                cli._require_docker()
-        self.assertIn("docker.com/products/docker-desktop", output.getvalue())
+        with (
+            patch("devspeed.cli.shutil.which", return_value=None),
+            self.assertRaises(cli.DockerNotFoundError) as ctx,
+        ):
+            cli._require_docker()
+        self.assertIn("docker.com/products/docker-desktop", str(ctx.exception))
 
     def test_invalid_yaml_exits_with_friendly_error(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / config.CONFIG_FILENAME
             path.write_text("services: [not: valid")
-            with self.assertRaises(SystemExit):
+            with self.assertRaises(config.ConfigValidationError):
                 config.load_config(Path(directory))
 
     def test_config_rejects_non_string_project_and_stack(self):
-        errors = config.validate_config(
-            {"project": 42, "stack": ["fastapi-postgres"], "services": {}}
-        )
-        self.assertIn("project must be a non-empty string", errors)
-        self.assertIn("stack must be a non-empty string", errors)
+        with self.assertRaises(config.ConfigValidationError):
+            config.validate_config({"project": 42, "stack": ["fastapi-postgres"], "services": {}})
 
     def test_list_and_parser_include_dry_run(self):
         output = StringIO()

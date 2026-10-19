@@ -100,18 +100,18 @@ name: {project}
 
 services:
   app:
-    image: python:{app['python_version']}-slim
+    image: python:{app["python_version"]}-slim
     working_dir: /app
     volumes:
       - ./:/app
     command: {app_command}
     ports:
-      - "{app['port']}:{app['port']}"
+      - "{app["port"]}:{app["port"]}"
     environment:
-      - DATABASE_URL=postgres://{postgres['user']}:{postgres['password']}@postgres:5432/{postgres['db']}
-      - POSTGRES_DB={postgres['db']}
-      - POSTGRES_USER={postgres['user']}
-      - POSTGRES_PASSWORD={postgres['password']}
+      - DATABASE_URL=postgres://{postgres["user"]}:{postgres["password"]}@postgres:5432/{postgres["db"]}
+      - POSTGRES_DB={postgres["db"]}
+      - POSTGRES_USER={postgres["user"]}
+      - POSTGRES_PASSWORD={postgres["password"]}
       - POSTGRES_HOST=postgres
     depends_on:
       postgres:

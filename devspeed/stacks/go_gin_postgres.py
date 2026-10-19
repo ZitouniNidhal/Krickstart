@@ -104,16 +104,16 @@ name: {project}
 
 services:
   app:
-    image: golang:{app.get('go_version', '1.22')}-alpine
+    image: golang:{app.get("go_version", "1.22")}-alpine
     working_dir: /app
     volumes:
       - ./:/app
     command: {app_command}
     ports:
-      - "{app['port']}:8080"
+      - "{app["port"]}:8080"
     environment:
       - PORT=8080
-      - DATABASE_URL=postgresql://{postgres['user']}:{postgres['password']}@postgres:5432/{postgres['db']}
+      - DATABASE_URL=postgresql://{postgres["user"]}:{postgres["password"]}@postgres:5432/{postgres["db"]}
     depends_on:
       postgres:
         condition: service_healthy
@@ -124,7 +124,7 @@ services:
     def env_file(self, config: Mapping[str, Any]) -> str:
         postgres = config["services"]["postgres"]
         return f"""\
-DATABASE_URL=postgresql://{postgres['user']}:{postgres['password']}@localhost:{postgres['port']}/{postgres['db']}
+DATABASE_URL=postgresql://{postgres["user"]}:{postgres["password"]}@localhost:{postgres["port"]}/{postgres["db"]}
 """
 
     def post_up_hints(self, config: Mapping[str, Any]) -> list[str]:

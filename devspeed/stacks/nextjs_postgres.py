@@ -107,15 +107,15 @@ name: {project}
 
 services:
   app:
-    image: node:{app.get('node_version', '22')}-alpine
+    image: node:{app.get("node_version", "22")}-alpine
     working_dir: /app
     volumes:
       - ./:/app
     command: {app_command}
     ports:
-      - "{app['port']}:3000"
+      - "{app["port"]}:3000"
     environment:
-      - DATABASE_URL=postgresql://{postgres['user']}:{postgres['password']}@postgres:5432/{postgres['db']}
+      - DATABASE_URL=postgresql://{postgres["user"]}:{postgres["password"]}@postgres:5432/{postgres["db"]}
     depends_on:
       postgres:
         condition: service_healthy
@@ -126,7 +126,7 @@ services:
     def env_file(self, config: Mapping[str, Any]) -> str:
         postgres = config["services"]["postgres"]
         return f"""\
-DATABASE_URL=postgresql://{postgres['user']}:{postgres['password']}@localhost:{postgres['port']}/{postgres['db']}
+DATABASE_URL=postgresql://{postgres["user"]}:{postgres["password"]}@localhost:{postgres["port"]}/{postgres["db"]}
 """
 
     def post_up_hints(self, config: Mapping[str, Any]) -> list[str]:
