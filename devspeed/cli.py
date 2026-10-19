@@ -15,7 +15,11 @@ from rich import print as rprint
 
 from devspeed import __version__
 from devspeed import config as cfg
-from devspeed.errors import DevspeedError
+from devspeed.errors import (
+    ConfigNotFoundError,
+    DevspeedError,
+    DockerNotFoundError,
+)
 from devspeed.stacks import get_stack, list_stacks
 from devspeed.stacks.common import env_example
 
