@@ -108,12 +108,11 @@ def cmd_create(args: argparse.Namespace) -> None:
 
 def _require_docker() -> None:
     if shutil.which("docker") is None:
-        print(
+        raise DockerNotFoundError(
             "Docker not detected. Install Docker Desktop from "
             "https://www.docker.com/products/docker-desktop/ and make sure "
             "'docker compose' works, then try again."
         )
-        sys.exit(1)
 
 
 def cmd_version(_args: argparse.Namespace) -> None:
@@ -281,7 +280,13 @@ def _generate_files(config: Mapping[str, Any], write: bool = True):
 
 def cmd_up(args: argparse.Namespace) -> None:
     _require_docker()
-    config = cfg.load_config()
+    try:
+        config = cfg.load_config()
+    except ConfigNotFoundError as e:
+        raise ConfigNotFoundError(
+            f"Configuration file {cfg.CONFIG_FILENAME} not found.",
+            hint="Run `devspeed init <stack>` first."
+        ) from e
     stack = _generate_files(config, write=not args.dry_run)
     if args.dry_run:
         print("\n[dry-run] Docker Compose was not started.")
@@ -319,20 +324,34 @@ def cmd_down(_args: argparse.Namespace) -> None:
 
 def _require_compose_file() -> None:
     if not pathlib.Path(GENERATED_COMPOSE).exists():
-        print("No generated Compose file found. Run 'devspeed up' first.")
-        sys.exit(1)
+        raise ConfigNotFoundError(
+            f"No generated Compose file found.",
+            hint="Run `devspeed up` first."
+        )
 
 
 def cmd_status(_args: argparse.Namespace) -> None:
     _require_docker()
-    _require_compose_file()
+    try:
+        _require_compose_file()
+    except ConfigNotFoundError as e:
+        raise ConfigNotFoundError(
+            f"No generated Compose file found.",
+            hint="Run `devspeed up` first."
+        ) from e
     result = subprocess.run(["docker", "compose", "-f", GENERATED_COMPOSE, "ps"], check=False)
     sys.exit(result.returncode)
 
 
 def cmd_logs(args: argparse.Namespace) -> None:
     _require_docker()
-    _require_compose_file()
+    try:
+        _require_compose_file()
+    except ConfigNotFoundError as e:
+        raise ConfigNotFoundError(
+            f"No generated Compose file found.",
+            hint="Run `devspeed up` first."
+        ) from e
     command = ["docker", "compose", "-f", GENERATED_COMPOSE, "logs"]
     if args.follow:
         command.append("--follow")
