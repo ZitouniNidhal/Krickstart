@@ -160,8 +160,9 @@ def cmd_doctor(args: argparse.Namespace) -> None:
         config = cfg.load_config()
         stack = get_stack(config["stack"])
         checks.append((True, f"{cfg.CONFIG_FILENAME} is valid ({config['stack']})"))
-    except (SystemExit, KeyError):
-        checks.append((False, f"{cfg.CONFIG_FILENAME} is missing or invalid"))
+    except (DevspeedError, KeyError) as e:
+        msg = str(e) if not isinstance(e, DevspeedError) else e.message
+        checks.append((False, f"{cfg.CONFIG_FILENAME} is missing or invalid: {msg}"))
 
     docker_path = shutil.which("docker")
     if not docker_path:
@@ -223,11 +224,23 @@ def cmd_doctor(args: argparse.Namespace) -> None:
 
     console.print(Panel("[bold cyan]🔍 devspeed doctor[/bold cyan]\nChecking system prerequisites", expand=False))
     
+    # Use a rich table for the results
+    table = Table(show_header=True, header_style="bold magenta")
+    table.add_column("Status", width=10)
+    table.add_column("Check")
+    table.add_column("Hint", style="dim")
+
+    all_passed = True
     for passed, message in checks:
         status = "[bold green]OK[/bold green]" if passed else "[bold red]!![/bold red]"
-        console.print(f"  {status} {message}")
-        
-    if not all(passed for passed, _ in checks):
+        hint = "" if passed else "Check Docker/Config"
+        table.add_row(status, message, hint)
+        if not passed:
+            all_passed = False
+            
+    console.print(table)
+    
+    if not all_passed:
         rprint("\n[bold red]Fix the items marked !!, then run devspeed doctor again.[/bold red]")
         sys.exit(1)
     
