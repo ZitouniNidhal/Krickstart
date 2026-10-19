@@ -1,3 +1,28 @@
+# [1.1.0](https://github.com/ZitouniNidhal/devspeed/compare/v1.0.0...v1.1.0) (2026-10-19)
+
+
+### Bug Fixes
+
+* **cli:** clear 'Run devspeed init <stack> first' message for up/status/logs when devspeed.yaml is missing ([77921ab](https://github.com/ZitouniNidhal/devspeed/commit/77921ab4adbde387c00497a94f13e4350de03b32))
+* **cli:** fix missing imports for error classes ([efd3834](https://github.com/ZitouniNidhal/devspeed/commit/efd38340af78a998a85d55d72c050a28e818a896))
+* **deps:** add pydantic and rich to project dependencies and register stacks ([4a8af25](https://github.com/ZitouniNidhal/devspeed/commit/4a8af257e4cbe14ebdf7e249df362ce20ca60654))
+* resolve quality gate lint/formatting issues, Dockerfile packaging, and unit tests ([42713f1](https://github.com/ZitouniNidhal/devspeed/commit/42713f1ef7036e073c7d017d625ec5668360982f))
+
+
+### Features
+
+* add Dockerfile and container CI pipeline ([5d1152c](https://github.com/ZitouniNidhal/devspeed/commit/5d1152cbeed86e2cc064a5c02f602fa0abf67b9d))
+* **cli:** add --version flag ([f12b12b](https://github.com/ZitouniNidhal/devspeed/commit/f12b12b0b9539349ebc1b84bd92483a94b347373))
+* **cli:** add global --debug flag and unified DevspeedError handling in main() ([abae9b5](https://github.com/ZitouniNidhal/devspeed/commit/abae9b5acd915bacd4f8a0b363c24c0d2ed4b435))
+* **cli:** consistent exit codes (0 ok, 1 user/config error, 2 environment/Docker error, 130 on Ctrl+C) ([5d5207e](https://github.com/ZitouniNidhal/devspeed/commit/5d5207e38daaa893a7a9c80547466a13f2ca75ec))
+* **config:** add pydantic models for devspeed.yaml ([1abac90](https://github.com/ZitouniNidhal/devspeed/commit/1abac9071b73d964b0749cad74040b5d59bea55c))
+* **doctor:** add free disk space check (warn below 2 GB) ([21a9500](https://github.com/ZitouniNidhal/devspeed/commit/21a95003ee3e367237f6411889f6bf195e8f278d))
+* **doctor:** use rich table for system checks ([254a312](https://github.com/ZitouniNidhal/devspeed/commit/254a31228a7168348f55ce7ae8eadec332b537e0))
+* **errors:** add DevspeedError exception hierarchy ([4fc50de](https://github.com/ZitouniNidhal/devspeed/commit/4fc50de0cee209a37443e1208e79b661d7a15d41))
+* **stacks:** add express-mongodb stack ([1076519](https://github.com/ZitouniNidhal/devspeed/commit/1076519aada9a1792c0647d8f256c19f56da0d6a))
+* **stacks:** add laravel-mysql stack and register new plugins ([8624310](https://github.com/ZitouniNidhal/devspeed/commit/8624310f5dc61e3d9033b5f88526297f680c878a))
+* **stacks:** add spring-boot-mysql stack ([4fd88e3](https://github.com/ZitouniNidhal/devspeed/commit/4fd88e3c9d676dcc401c73872c870c25b5d6920c))
+
 # 1.0.0 (2026-10-17)
 
 
