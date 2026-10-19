@@ -208,6 +208,17 @@ def cmd_doctor(args: argparse.Namespace) -> None:
         if not port_conflict:
             checks.append((True, "No host port conflicts detected"))
 
+    # Check for free disk space (warn below 2 GB)
+    try:
+        usage = shutil.disk_usage(".")
+        free_gb = usage.free / (1024**3)
+        if free_gb < 2:
+            checks.append((False, f"Low disk space: {free_gb:.2f} GB remaining (warn below 2 GB)"))
+        else:
+            checks.append((True, f"Sufficient disk space: {free_gb:.2f} GB remaining"))
+    except Exception as e:
+        checks.append((False, f"Could not check disk space: {e}"))
+
     if getattr(args, "fix", False) and config and stack:
         # Repair .env.example
         example_path = pathlib.Path(GENERATED_ENV_EXAMPLE)
