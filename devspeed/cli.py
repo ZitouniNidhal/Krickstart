@@ -15,6 +15,7 @@ from rich import print as rprint
 
 from devspeed import __version__
 from devspeed import config as cfg
+from devspeed.errors import DevspeedError
 from devspeed.stacks import get_stack, list_stacks
 from devspeed.stacks.common import env_example
 
@@ -366,6 +367,7 @@ def build_parser():
         prog="devspeed",
         description="Spin up a local dev environment from a single config file.",
     )
+    parser.add_argument("--debug", action="store_true", help="Show full traceback on unexpected errors")
     parser.add_argument("--version", "-v", action="version", version=f"devspeed v{__version__}")
     sub = parser.add_subparsers(dest="command", required=True)
 
@@ -442,7 +444,25 @@ def build_parser():
 def main() -> None:
     parser = build_parser()
     args = parser.parse_args()
-    args.func(args)
+    
+    try:
+        args.func(args)
+    except KeyboardInterrupt:
+        rprint("\n[bold yellow]Operation cancelled by user.[/bold yellow]")
+        sys.exit(130)
+    except DevspeedError as e:
+        console.print(f"[bold red]Error:[/bold red] {e.message}")
+        if e.hint:
+            console.print(f"[dim]{e.hint}[/dim]")
+        sys.exit(e.exit_code)
+    except Exception as e:
+        if getattr(args, "debug", False):
+            import traceback
+            traceback.print_exc()
+        else:
+            rprint(f"[bold red]Unexpected error:[/bold red] {e}")
+            rprint("[dim]Run with --debug for the full traceback[/dim]")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
