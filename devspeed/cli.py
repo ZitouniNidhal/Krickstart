@@ -117,7 +117,7 @@ def _require_docker() -> None:
 
 
 def cmd_version(_args: argparse.Namespace) -> None:
-    print(f"devspeed v{__version__}")
+    rprint(f"devspeed v{__version__}")
 
 
 def cmd_validate(_args: argparse.Namespace) -> None:
