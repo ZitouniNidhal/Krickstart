@@ -36,18 +36,22 @@ spring-boot-mysql = "devspeed.stacks.spring_boot_mysql:plugin"
 laravel-mysql = "devspeed.stacks.laravel_mysql:plugin"
 
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=61.0"]  # Or hatchling, flit, etc.
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-packages = ["devspeed", "devspeed.core", "devspeed.plugins", "devspeed.stacks"]
+[project]
+name = "devspeed"  # Must be unique on PyPI, not conflicting with existing packages
+version = "0.1.0"  # Version number, can be updated with each release
+description = "A brief description of your project"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}  # Or use SPDX expression, such as license = "MIT"
+authors = [
+    {name = "ZitouniNidhal"}
+]
+dependencies = [
+    # List the packages your project depends on here, e.g., "requests>=2.0"
+]
 
-[tool.black]
-line-length = 100
-
-[tool.ruff]
-line-length = 100
-target-version = "py39"
-
-[tool.mypy]
-ignore_missing_imports = true
+[project.urls]
+Homepage = "https://github.com/ZitouniNidhal/devspeed"
