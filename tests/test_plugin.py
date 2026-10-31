@@ -73,6 +73,7 @@ class PluginTests(unittest.TestCase):
 
     def test_builtin_stack_contracts(self):
         from devspeed.plugins.registry import builtin_registry
+
         registry = builtin_registry()
         for plugin in registry.all():
             with self.subTest(plugin=plugin.name):

@@ -1,209 +1,197 @@
 # ⚡ devspeed
 
-**Spin up a professional local development environment in seconds.**
+**Spin up a reproducible local development environment in seconds.**
 
-[![Build](https://img.shields.io/github/actions/workflow/status/OWNER/devspeed/ci.yml?branch=main&label=build)](https://github.com/OWNER/devspeed/actions)
+[![Build](https://img.shields.io/github/actions/workflow/status/ZitouniNidhal/devspeed/ci.yml?branch=master&label=build)](https://github.com/ZitouniNidhal/devspeed/actions)
 [![PyPI](https://img.shields.io/pypi/v/devspeed.svg)](https://pypi.org/project/devspeed/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Python](https://img.shields.io/pypi/pyversions/devspeed.svg)](https://pypi.org/project/devspeed/)
+[![Python](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)](https://pypi.org/project/devspeed/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-`devspeed` is a high-performance CLI tool that transforms a simple `devspeed.yaml` into a fully operational, reproducible Docker Compose environment. It eliminates the "it works on my machine" struggle by automating starter files, database wiring, and connection URL generation.
+`devspeed` is an opinionated, high-performance CLI tool that turns a concise `devspeed.yaml` recipe into a fully operational, reproducible Docker Compose environment. It eliminates the "it works on my machine" struggle by automating starter templates, database wiring, environment contracts, and connection URL generation.
 
-**Stop debugging your environment. Start building your app.**
+**Stop debugging ports, volumes, and health checks. Start building.**
 
 ```text
-devspeed.yaml  ➔  devspeed up  ➔  🚀 Ready-to-code Stack
+devspeed.yaml  ➔  devspeed up  ➔  🚀 Ready-to-code Stack (App + Database + URLs)
 ```
 
-## ✨ Why devspeed?
+---
 
-Docker Compose is powerful, but the "last mile" of onboarding is always painful. Teams waste hours on ports, health checks, and manual `.env` updates. 
+## 🏛️ Architecture Overview
 
-`devspeed` provides the **missing abstraction layer**:
-- **Zero-Config Onboarding**: New developers run one command and get a working stack.
-- **Standardized Contracts**: Commit a single YAML recipe that defines the team's infrastructure.
-- **Smart Defaults**: Built-in templates for the most common stacks (FastAPI, Django, Node, etc.).
-- **Editor Agnostic**: Works perfectly whether you use VS Code, PyCharm, Vim, or a plain terminal.
+`devspeed` sits as a declarative translation layer between your team's configuration contract and Docker Compose:
 
-## 📊 devspeed vs. The Alternatives
+```mermaid
+flowchart TD
+    subgraph User Workspace
+        YAML["devspeed.yaml\n(Team Contract)"]
+        CLI["devspeed CLI\n(create / doctor / up / down)"]
+    end
 
-| Capability | ⚡ devspeed | Plain Docker Compose | VS Code Dev Containers |
-| :--- | :---: | :---: | :---: |
-| **Instant Starters** | ✅ Built-in Templates | ❌ Manual Setup | ⚠️ Custom Definitions |
-| **Team Sync** | ✅ Single YAML Contract | ⚠️ Compose + Wiki | ⚠️ `.devcontainer` |
-| **Auto-Wiring** | ✅ Generated URLs/Env | ❌ Manual `.env` | ⚠️ Partial |
-| **Editor Lock-in** | ❌ None | ❌ None | ✅ VS Code Optimized |
-| **Onboarding** | 🚀 Seconds | 🐢 Hours | 🚶 Minutes |
+    subgraph Core Engine
+        REG["Plugin Registry\n(Built-in + Entry Points)"]
+        VAL["Schema & Port Validator\n(Conflict Detection)"]
+        GEN["Compose Generator\n(Atomic Writes & Locks)"]
+    end
+
+    subgraph Generated Outputs
+        DC["docker-compose.devspeed.yml\n(Services, Volumes, Healthchecks)"]
+        ENV[".env.devspeed\n(DATABASE_URL, REDIS_URL)"]
+        EX[".env.example\n(Masked Team Template)"]
+    end
+
+    subgraph Runtime
+        DOCKER["Docker Engine / Compose v2\n(127.0.0.1 Isolated Containers)"]
+    end
+
+    YAML --> CLI
+    CLI --> VAL
+    CLI --> REG
+    REG --> GEN
+    VAL --> GEN
+    GEN --> DC
+    GEN --> ENV
+    GEN --> EX
+    DC --> DOCKER
+```
+
+---
+
+## 📊 devspeed vs. Alternatives
+
+| Capability | ⚡ devspeed | Docker Compose | VS Code Dev Containers | Tilt | Nix / devenv |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Instant Starters** | ✅ Built-in Stacks | ❌ Manual Setup | ⚠️ Template repos | ❌ Manual Tiltfile | ⚠️ Custom flake |
+| **Configuration Complexity** | 🟢 Low (~15 lines YAML) | 🔴 High (verbose Compose) | 🟡 Medium (`devcontainer.json`) | 🔴 High (Starlark/Tiltfile) | 🔴 High (Nix language) |
+| **Auto-Wiring (`.env` / URLs)** | ✅ Automated | ❌ Manual `.env` | ⚠️ Partial | ❌ Manual | ⚠️ Environment vars only |
+| **Editor Agnostic** | ✅ Any editor/IDE | ✅ Any editor/IDE | ❌ Optimized for VS Code | ✅ Any editor/IDE | ✅ Any editor/IDE |
+| **Learning Curve** | 🚀 2 minutes | ⏳ Days | ⏳ Hours | ⏳ Days (K8s required) | ⏳ Weeks (Nix syntax) |
+| **Host Port Conflict Checks** | ✅ `doctor` pre-flight | ❌ Fails on startup | ❌ Manual | ⚠️ Port-forwarding | ❌ Fails on startup |
+| **Localhost Isolation (127.0.0.1)** | ✅ Default | ❌ Defaults to `0.0.0.0` | ⚠️ Container internal | ⚠️ Varies | N/A (Host processes) |
+
+---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- **Python 3.9+**
-- **Docker Desktop** (with Compose v2)
+- **Python 3.9+** (Python 3.10+ recommended)
+- **Docker Desktop** or Docker Engine with Docker Compose v2
 
 ### Installation
+
+Install via your preferred Python tool manager:
+
 ```bash
+# Recommended (isolated CLI application)
+pipx install devspeed
+# or with uv:
+uv tool install devspeed
+
+# Or with standard pip
 pip install devspeed
 ```
 
-### Get Running in 30 Seconds
+### 30-Second Setup
+
 ```bash
-# 1. Interactively choose a stack (e.g., FastAPI + Postgres)
+# 1. Interactively choose a stack (e.g. FastAPI + PostgreSQL)
 devspeed create
 
-# 2. Verify your system is ready
+# 2. Check local environment and port availability
 devspeed doctor
 
-# 3. Launch the environment
+# 3. Launch isolated environment
 devspeed up
 ```
 
-### Pro Workflow (Scriptable)
+### Scripted / CI Workflow
+
 ```bash
-devspeed init fastapi-postgres --name my-awesome-api
+devspeed init fastapi-postgres --name billing-api
+devspeed doctor
 devspeed up
 ```
 
-## � Available Stacks
+---
 
-| Stack | Includes |
-| :--- | :--- |
-| `node-postgres-redis` | Node.js / Express API, PostgreSQL, and Redis |
-| `fastapi-postgres` | FastAPI application and PostgreSQL |
-| `django-postgres` | Django web application and PostgreSQL |
-| `flask-postgres` | Flask API and PostgreSQL |
-| `nextjs-postgres` | Next.js App Router fullstack app and PostgreSQL |
-| `go-gin-postgres` | Go Gin REST API and PostgreSQL |
-| `spring-boot-postgres` | Spring Boot application and PostgreSQL |
+## 📦 Maintained Stacks
 
-## �🛠️ Command Reference
+All maintained stacks feature health checks, volume persistence, and loopback security (`127.0.0.1` binding):
+
+| Stack | Description | Included Services |
+| :--- | :--- | :--- |
+| `fastapi-postgres` | Python FastAPI REST API | FastAPI (Python 3.12), PostgreSQL 16 |
+| `django-postgres` | Django Web Framework | Django (Python 3.12), PostgreSQL 16 |
+| `flask-postgres` | Flask Microframework | Flask, PostgreSQL 16 |
+| `node-postgres-redis` | Node.js Express API | Express (Node 22), PostgreSQL 16, Redis 7 |
+| `nextjs-postgres` | Next.js App Router | Next.js, PostgreSQL 16 |
+| `go-gin-postgres` | Go Gin REST API | Go Gin, PostgreSQL 16 |
+| `spring-boot-postgres` | Java Spring Boot | Spring Boot (JDK 21), PostgreSQL 16 |
+
+---
+
+## 🛠️ CLI Command Reference
 
 | Command | Description |
 | :--- | :--- |
-| `devspeed list` | Show all available stack templates |
-| `devspeed init <stack>` | Create a `devspeed.yaml` for a specific stack |
-| `devspeed create` | Interactively choose and initialize a stack |
-| `devspeed up` | Generate files and start containers |
-| `devspeed doctor` | Health check for Docker and configuration |
-| `devspeed down` | Stop containers (keeps data) |
-| `devspeed cleanup` | Wipe everything (containers, volumes, generated files) |
+| `devspeed list` | Show all available stack templates and descriptions |
+| `devspeed init <stack>` | Generate `devspeed.yaml` and starter files for a chosen stack |
+| `devspeed create` | Interactive terminal wizard to pick and initialize a stack |
+| `devspeed validate` | Validate schema and ensure stack plugin can render without errors |
+| `devspeed doctor` | Health-check Docker, Compose v2, YAML syntax, and detect port conflicts |
+| `devspeed doctor --fix` | Automatically repair missing safe assets (e.g., regenerate `.env.example`) |
+| `devspeed up` | Render Compose files and start containers in detached mode |
+| `devspeed up --dry-run` | Preview generated YAML and `.env` files without writing or starting Docker |
+| `devspeed down` | Gracefully stop containers (preserves database volumes) |
+| `devspeed status` | Display container runtime health and port mappings (`docker compose ps`) |
+| `devspeed logs [service]` | View or follow service logs (`--follow` supported) |
+| `devspeed export` | Export standalone `docker-compose.yml` and `.env` for production or CI |
+| `devspeed cleanup` | Stop containers, remove named volumes, and clean up generated files |
 
-## 🧩 Advanced Capabilities
+---
 
-`devspeed` isn't just for starters; it's a framework for environment automation.
+## 🔒 Security Best Practices
 
-### 🔌 Plugin System
-Want a custom stack for your company's internal architecture? You can distribute your own stacks as Python plugins. 
-- **Custom Stacks:** Define your own services, volumes, and environment variables.
-- **Lifecycle Hooks:** Automate setup tasks (like database migrations) via `lifecycle.install` and `lifecycle.dev`.
-- **Extensibility:** Third-party stacks can be discovered automatically via Python entry points.
+1. **Loopback Isolation (`127.0.0.1`)**: `devspeed` binds container ports to `127.0.0.1` by default rather than `0.0.0.0`, protecting databases and internal APIs from exposure on public Wi-Fi or local networks.
+2. **Masked Examples**: Generated `.env.example` templates automatically redact credentials so teammates can safely commit environment templates to git without leaking passwords.
+3. **Never Commit Generated Files**:
+   Add to your `.gitignore`:
+   ```gitignore
+   docker-compose.devspeed.yml
+   .env.devspeed
+   .env
+   ```
 
-### ⚙️ Customization
-The `devspeed.yaml` contract allows you to override defaults:
-- **Port Mapping:** Change default ports to avoid conflicts.
-- **Service Tuning:** Adjust resource limits or restart policies.
-- **Environment Variables:** Inject project-specific secrets and configs.
+---
 
-## 🗺️ Roadmap & Future
+## 🔌 Plugin System & Extensibility
 
-We are building the future of local development. Check out our [ROADMAP.md](ROADMAP.md) for the full vision, including:
-- **Local Dashboard:** A visual interface to manage your services, logs, and resource usage.
-- **Seed Data:** Built-in fixtures to populate your DBs instantly.
-- **Local-Install Mode:** Support for environments without Docker.
-- **Expanded Stack Library:** Adding Spring Boot, .NET, and more.
+`devspeed` provides an open plugin interface using Python entry points. Organizations can package internal corporate stacks and publish them as private or public packages.
+
+Third-party packages expose plugins via the `devspeed.stacks` entry point group in `pyproject.toml`:
+
+```toml
+[project.entry-points."devspeed.stacks"]
+company-microservice = "my_company_stacks.microservice:MicroservicePlugin"
+```
+
+Plugins implement the `StackPlugin` interface (`name`, `description`, `default_config`, `compose_yaml`, `env_file`, `post_up_hints`). See [docs/plugin-authoring.md](docs/plugin-authoring.md) for complete details.
+
+---
 
 ## 🤝 Contributing
 
-We love contributions! Whether it's a new stack template, a bug fix, or documentation improvement, please check out our [CONTRIBUTING.md](CONTRIBUTING.md).
-
-**Ways to help:**
-- 🌟 **Star the repo** to show your support.
-- 🐛 **Report bugs** or request features in the Issues tab.
-- 🛠️ **Build a plugin** and share your custom stack with the community.
-- 📝 **Improve docs** to help other developers get started faster.
-
-## 📖 Deep Dive & Guides
-
-### Team Workflow
-`devspeed.yaml` is the source of truth. Commit it to your repo so every teammate uses the same environment.
+We welcome community contributions, bug reports, and stack submissions!
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) and our [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) before opening a PR.
 
 ```bash
-# Create the project recipe once
-devspeed init fastapi-postgres --name billing-api
-
-# Review and commit the source-of-truth configuration
-git add devspeed.yaml
-git commit -m "Add local development environment"
-
-# Every teammate uses the same workflow
-devspeed doctor
-devspeed up
-devspeed status
-devspeed logs app
+# Run local test suite and quality gates:
+python scripts/dev.py check
 ```
 
-**Generated Files (Add to `.gitignore`):**
-- `docker-compose.devspeed.yml`
-- `.env.devspeed`
-- `.env.example` (Can be committed as a safe template)
+## 📄 License
 
-### Example Configuration
-```yaml
-project: my-api
-stack: node-postgres-redis
-services:
-  app:
-    port: 3000
-    node_version: "22"
-  postgres:
-    port: 5432
-    db: my_api
-    user: devspeed
-    password: devspeed
-  redis:
-    port: 6379
-lifecycle:
-  install: npm install
-  dev: npm run dev
-```
-`lifecycle.install` and `lifecycle.dev` are optional. They replace the stack's default commands inside the app container.
-
-### Full CLI Reference
-
-| Command | Purpose |
-| :--- | :--- |
-| `devspeed version` | Show devspeed CLI version |
-| `devspeed list` | Browse available stack templates |
-| `devspeed init <stack>` | Create a shareable `devspeed.yaml` |
-| `devspeed create` | Choose a stack with an interactive wizard |
-| `devspeed validate` | Validate `devspeed.yaml` schema and stack configuration |
-| `devspeed doctor` | Check configuration and Docker before starting |
-| `devspeed doctor --fix` | Auto-repair safe missing setup items (e.g. `.env.example`) |
-| `devspeed up` | Generate files and start services |
-| `devspeed up --dry-run` | Preview generated files without starting Docker |
-| `devspeed down` | Stop services without deleting data |
-| `devspeed status` | Show the status of every service |
-| `devspeed logs [service]` | Inspect logs, optionally for one service |
-| `devspeed export` | Export standalone `docker-compose.yml` and `.env` files |
-| `devspeed cleanup` | Stop services, remove volumes, and remove generated outputs |
-
-## 🛠️ Troubleshooting
-
-### Docker is not detected
-Install [Docker Desktop](https://www.docker.com/products/docker-desktop/), start it, and verify with `docker compose version`. Then run `devspeed doctor` again.
-
-### A port is already in use
-Change the affected host `port` in `devspeed.yaml`, stop any old process using the port, and run `devspeed up` again.
-
-### YAML is invalid
-Check indentation and quote values containing `:` or special characters. Run `devspeed doctor` to see the configuration area that needs attention.
-
-### Containers start but the app is unhealthy
-Run `devspeed logs app` and verify that your lifecycle commands and expected starter files match the selected stack.
-
----
-*Built for developers who value their time.*
-
-## License
-`devspeed` is released under the MIT License. See [LICENSE](LICENSE).
+This project is licensed under the [MIT License](LICENSE).

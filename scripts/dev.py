@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import argparse
@@ -16,7 +15,7 @@ BUILD_DIRS = (ROOT / "build", ROOT / "dist", ROOT / "devspeed.egg-info")
 
 
 def run(command: Sequence[str], *, check: bool = True) -> int:
-    
+
     printable = " ".join(command)
     print(f"\n$ {printable}")
     completed = subprocess.run(list(command), cwd=ROOT, check=False)
@@ -26,7 +25,7 @@ def run(command: Sequence[str], *, check: bool = True) -> int:
 
 
 def python_module(module: str, *arguments: str) -> list[str]:
-   
+
     return [sys.executable, "-m", module, *arguments]
 
 

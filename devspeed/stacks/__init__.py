@@ -3,7 +3,7 @@
 from devspeed.plugins.base import StackPlugin
 from devspeed.plugins.registry import PluginRegistry, builtin_registry
 
-_REGISTRY = builtin_registry()
+_REGISTRY = builtin_registry().discover()
 
 # Kept as a snapshot for callers that used the old STACKS mapping.
 STACKS: dict[str, StackPlugin] = {plugin.name: plugin for plugin in _REGISTRY.all()}

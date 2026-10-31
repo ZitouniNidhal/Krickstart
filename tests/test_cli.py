@@ -44,12 +44,20 @@ class CliTests(unittest.TestCase):
             "flask-postgres",
             "nextjs-postgres",
             "go-gin-postgres",
+            "spring-boot-postgres",
         ):
             with self.subTest(stack=stack_name):
                 stack = cli.get_stack(stack_name)
                 config = stack.default_config("test-project")
-                self.assertIn("services:", stack.compose_yaml(config))
-                self.assertTrue(stack.starter_files(config))
+                compose = stack.compose_yaml(config)
+                self.assertIn("services:", compose)
+                self.assertIsInstance(stack.starter_files(config), dict)
+
+    def test_postgres_binds_to_localhost_by_default(self):
+        stack = cli.get_stack("fastapi-postgres")
+        config = stack.default_config("sec-test")
+        compose = stack.compose_yaml(config)
+        self.assertIn("127.0.0.1:", compose)
 
     def test_init_dry_run_does_not_write_files(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -203,7 +211,6 @@ class CliTests(unittest.TestCase):
                 self.assertTrue(Path(cli.GENERATED_ENV_EXAMPLE).exists())
             finally:
                 os.chdir(original_directory)
-
 
     def test_cmd_export_writes_standalone_files(self):
         with tempfile.TemporaryDirectory() as directory:

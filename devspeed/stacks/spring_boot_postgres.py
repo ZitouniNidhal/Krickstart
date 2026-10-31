@@ -108,4 +108,3 @@ def env_file(config: Mapping[str, Any]) -> str:
 
 def post_up_hints(config: Mapping[str, Any]) -> list[str]:
     return plugin.post_up_hints(config)
-
