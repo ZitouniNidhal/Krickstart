@@ -11,7 +11,6 @@ WORKDIR /app
 # Copy the entire project first (including krickstart and devspeed folders)
 COPY pyproject.toml README.md ./
 COPY krickstart/ krickstart/
-COPY devspeed/ devspeed/
 
 # Install the package
 RUN pip install --no-cache-dir .
