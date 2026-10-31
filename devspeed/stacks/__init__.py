@@ -1,28 +1,15 @@
-"""Built-in stack compatibility exports and the public plugin registry."""
+"""Backward-compatibility aliases for devspeed.stacks."""
 
-from devspeed.plugins.base import StackPlugin
-from devspeed.plugins.registry import PluginRegistry, builtin_registry
+from __future__ import annotations
 
-_REGISTRY = builtin_registry().discover()
-
-# Kept as a snapshot for callers that used the old STACKS mapping.
-STACKS: dict[str, StackPlugin] = {plugin.name: plugin for plugin in _REGISTRY.all()}
-
-
-def get_registry() -> PluginRegistry:
-    """Return the process registry containing built-ins and installed plugins."""
-    return _REGISTRY
-
-
-def get_stack(name: str) -> StackPlugin:
-    """Return a stack plugin by its stable configuration name."""
-    return _REGISTRY.get(name)
-
-
-def list_stacks() -> list[tuple[str, str]]:
-    """Return stack names and descriptions for the CLI and integrations."""
-    return [(plugin.name, plugin.description) for plugin in _REGISTRY.all()]
-
+from slipway.stacks import (
+    STACKS,
+    PluginRegistry,
+    StackPlugin,
+    get_registry,
+    get_stack,
+    list_stacks,
+)
 
 __all__ = [
     "STACKS",
