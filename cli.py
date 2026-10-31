@@ -1,6 +1,7 @@
 import sys
 import warnings
 
+
 def main():
     warnings.warn(
         "The 'devspeed' command is deprecated. Please use 'krickstart' instead.",
