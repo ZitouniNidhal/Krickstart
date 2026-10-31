@@ -1,0 +1,34 @@
+"""Built-in stack compatibility exports and the public plugin registry for Slipway."""
+
+from slipway.plugins.base import StackPlugin
+from slipway.plugins.registry import PluginRegistry, builtin_registry
+
+_REGISTRY = builtin_registry().discover()
+
+# Kept as a snapshot for callers that used the old STACKS mapping.
+STACKS: dict[str, StackPlugin] = {plugin.name: plugin for plugin in _REGISTRY.all()}
+
+
+def get_registry() -> PluginRegistry:
+    """Return the process registry containing built-ins and installed plugins."""
+    return _REGISTRY
+
+
+def get_stack(name: str) -> StackPlugin:
+    """Return a stack plugin by its stable configuration name."""
+    return _REGISTRY.get(name)
+
+
+def list_stacks() -> list[tuple[str, str]]:
+    """Return stack names and descriptions for the CLI and integrations."""
+    return [(plugin.name, plugin.description) for plugin in _REGISTRY.all()]
+
+
+__all__ = [
+    "STACKS",
+    "PluginRegistry",
+    "StackPlugin",
+    "get_registry",
+    "get_stack",
+    "list_stacks",
+]
