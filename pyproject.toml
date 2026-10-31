@@ -38,7 +38,7 @@ Changelog = "https://github.com/ZitouniNidhal/devspeed/blob/master/ROADMAP.md"
 
 [project.optional-dependencies]
 dev = [
-    "black>=24.0",
+    "black>=26.10.1",
     "build>=1.2",
     "mypy>=1.10",
     "pip-audit>=2.7",
