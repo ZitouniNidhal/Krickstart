@@ -9,9 +9,9 @@ from pathlib import Path
 from typing import Optional
 
 ROOT = Path(__file__).resolve().parents[1]
-PACKAGE_DIR = ROOT / "devspeed"
+PACKAGE_DIR = ROOT / "krickstart"
 TESTS_DIR = ROOT / "tests"
-BUILD_DIRS = (ROOT / "build", ROOT / "dist", ROOT / "devspeed.egg-info")
+BUILD_DIRS = (ROOT / "build", ROOT / "dist", ROOT / "krickstart.egg-info")
 
 
 def run(command: Sequence[str], *, check: bool = True) -> int:
@@ -31,22 +31,22 @@ def python_module(module: str, *arguments: str) -> list[str]:
 
 def format_code() -> None:
     """Format all Python source and test files with Black."""
-    run(python_module("black", "devspeed", "tests", "scripts"))
+    run(python_module("black", "krickstart", "tests", "scripts"))
 
 
 def check_format() -> None:
     """Verify that Black would not modify the repository."""
-    run(python_module("black", "--check", "devspeed", "tests", "scripts"))
+    run(python_module("black", "--check", "krickstart", "tests", "scripts"))
 
 
 def lint() -> None:
     """Run Ruff over application, test, and development script code."""
-    run(python_module("ruff", "check", "devspeed", "tests", "scripts"))
+    run(python_module("ruff", "check", "krickstart", "tests", "scripts"))
 
 
 def typecheck() -> None:
     """Run mypy using the project's supported Python compatibility settings."""
-    run(python_module("mypy", "devspeed", "--ignore-missing-imports"))
+    run(python_module("mypy", "krickstart", "--ignore-missing-imports"))
 
 
 def test() -> None:
@@ -56,7 +56,7 @@ def test() -> None:
 
 def compile_package() -> None:
     """Compile package sources to catch syntax errors early."""
-    run(python_module("compileall", "-q", "devspeed"))
+    run(python_module("compileall", "-q", "krickstart"))
 
 
 def check() -> None:
@@ -96,7 +96,7 @@ def clean() -> None:
 
 def build_parser() -> argparse.ArgumentParser:
     """Create the development task command-line parser."""
-    parser = argparse.ArgumentParser(description="Run devspeed development tasks.")
+    parser = argparse.ArgumentParser(description="Run krickstart development tasks.")
     subparsers = parser.add_subparsers(dest="task", required=True)
     commands = {
         "format": (format_code, "Format Python source with Black"),

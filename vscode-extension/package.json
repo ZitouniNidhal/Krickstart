@@ -1,6 +1,6 @@
 {
-  "name": "devspeed",
-  "displayName": "DevSpeed",
+  "name": "krickstart",
+  "displayName": "krickstart",
   "description": "Spin up professional local development environments in seconds.",
   "version": "0.1.0",
   "publisher": "nidhal-zitouni",
@@ -16,20 +16,20 @@
   "contributes": {
     "commands": [
       {
-        "command": "devspeed.up",
-        "title": "DevSpeed: Up"
+        "command": "krickstart.up",
+        "title": "krickstart: Up"
       },
       {
-        "command": "devspeed.init",
-        "title": "DevSpeed: Init"
+        "command": "krickstart.init",
+        "title": "krickstart: Init"
       },
       {
-        "command": "devspeed.doctor",
-        "title": "DevSpeed: Doctor"
+        "command": "krickstart.doctor",
+        "title": "krickstart: Doctor"
       },
       {
-        "command": "devspeed.cleanup",
-        "title": "DevSpeed: Cleanup"
+        "command": "krickstart.cleanup",
+        "title": "krickstart: Cleanup"
       }
     ]
   },
