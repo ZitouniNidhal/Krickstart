@@ -1,0 +1,529 @@
+import argparse
+import pathlib
+import shutil
+import socket
+import subprocess
+import sys
+from collections.abc import Mapping
+from typing import Any
+
+from rich import print as rprint
+from rich.console import Console
+from rich.panel import Panel
+from rich.prompt import IntPrompt, Prompt
+from rich.table import Table
+
+from slipway import __version__
+from slipway import config as cfg
+from slipway.errors import (
+    ConfigNotFoundError,
+    DockerNotFoundError,
+    SlipwayError,
+)
+from slipway.stacks import get_stack, list_stacks
+from slipway.stacks.common import env_example
+
+console = Console(legacy_windows=False)
+
+GENERATED_COMPOSE = "docker-compose.slipway.yml"
+GENERATED_ENV = ".env.slipway"
+GENERATED_ENV_EXAMPLE = ".env.example"
+LEGACY_GENERATED_COMPOSE = "docker-compose.devspeed.yml"
+LEGACY_GENERATED_ENV = ".env.devspeed"
+
+
+def _resolve_compose_file() -> pathlib.Path | None:
+    p = pathlib.Path(GENERATED_COMPOSE)
+    if p.exists():
+        return p
+    legacy = pathlib.Path(LEGACY_GENERATED_COMPOSE)
+    if legacy.exists():
+        return legacy
+    return None
+
+
+def cmd_list(_args: argparse.Namespace) -> None:
+    table = Table(title="slipway stacks", show_header=True, header_style="bold magenta")
+    table.add_column("Stack Name", style="cyan", width=24)
+    table.add_column("Description", style="white")
+
+    for name, description in list_stacks():
+        table.add_row(name, description)
+
+    console.print("\n", table)
+    rprint("\n[bold green]Start one with:[/bold green] [bold]slipway init <stack>[/bold]")
+
+
+def cmd_init(args: argparse.Namespace) -> None:
+    project_name = args.project_name or pathlib.Path.cwd().name
+    _create_config(args.stack, project_name, args.force, args.dry_run)
+
+
+def _create_config(
+    stack_name: str, project_name: str, force: bool = False, dry_run: bool = False
+) -> None:
+    try:
+        stack = get_stack(stack_name)
+    except KeyError as e:
+        print(f"Error: {e}")
+        sys.exit(1)
+
+    path = cfg.config_path()
+    if path.exists() and not force:
+        print(f"{cfg.CONFIG_FILENAME} already exists. Use --force to overwrite.")
+        sys.exit(1)
+
+    config = stack.default_config(project_name)
+    if dry_run:
+        print(f"[dry-run] would write {cfg.CONFIG_FILENAME}")
+    else:
+        cfg.save_config(config)
+    created_files = []
+    for filename, contents in stack.starter_files(config).items():
+        starter_path = pathlib.Path(filename)
+        if not starter_path.exists():
+            if not dry_run:
+                starter_path.parent.mkdir(parents=True, exist_ok=True)
+                starter_path.write_text(contents, encoding="utf-8")
+            created_files.append(filename)
+    example_path = pathlib.Path(GENERATED_ENV_EXAMPLE)
+    if not example_path.exists():
+        if not dry_run:
+            example_path.write_text(env_example(stack.env_file(config)), encoding="utf-8")
+        created_files.append(GENERATED_ENV_EXAMPLE)
+    if dry_run:
+        print("[dry-run] no files were written")
+    print(f"\n{'Previewed' if dry_run else 'Created'} {cfg.CONFIG_FILENAME}")
+    print(f"  stack   {stack.name}")
+    print(f"  project {project_name}")
+    if created_files:
+        print(f"  starter {', '.join(created_files)}")
+    print("\nNext steps:")
+    print("  1. slipway doctor   # check Docker and your config")
+    print("  2. slipway up       # start the environment")
+
+
+def cmd_create(args: argparse.Namespace) -> None:
+    console.print(
+        Panel(
+            "[bold cyan]slipway create[/bold cyan]\nChoose a stack to initialize your environment",
+            expand=False,
+        )
+    )
+
+    stacks = list_stacks()
+
+    try:
+        selection = IntPrompt.ask(
+            "\nSelect a stack number", choices=[str(i + 1) for i in range(len(stacks))], default=1
+        )
+        stack_name = stacks[selection - 1][0]
+    except (ValueError, EOFError):
+        rprint("[bold red]Error:[/bold red] Invalid selection. Please run the command again.")
+        sys.exit(1)
+
+    default_name = pathlib.Path.cwd().name
+    project_name = Prompt.ask("Project name", default=default_name)
+
+    _create_config(stack_name, args.project_name or project_name, args.force, args.dry_run)
+
+
+def _require_docker() -> None:
+    if shutil.which("docker") is None:
+        raise DockerNotFoundError(
+            "Docker not detected. Install Docker Desktop from "
+            "https://www.docker.com/products/docker-desktop/ and make sure "
+            "'docker compose' works, then try again."
+        )
+
+
+def cmd_version(_args: argparse.Namespace) -> None:
+    rprint(f"slipway v{__version__}")
+
+
+def cmd_validate(_args: argparse.Namespace) -> None:
+    path = cfg.config_path()
+    if not path.exists():
+        print(f"Error: {cfg.CONFIG_FILENAME} not found.")
+        sys.exit(1)
+
+    config = cfg.load_config()
+    try:
+        stack_name = config.get("stack")
+        if not isinstance(stack_name, str):
+            print(f"Error: 'stack' must be a string, got {type(stack_name).__name__}")
+            sys.exit(1)
+        stack = get_stack(stack_name)
+
+    except KeyError as e:
+        print(f"Validation failed: {e}")
+        sys.exit(1)
+
+    print("\nslipway validate\n")
+    print(f"  [OK] Configuration file: {path.name}")
+    print(f"  [OK] Project name: {config['project']}")
+    print(f"  [OK] Stack plugin: {stack.name} ({stack.description})")
+
+    try:
+        stack.compose_yaml(config)
+        print("  [OK] Docker Compose rendering successful")
+    except (TypeError, KeyError, ValueError, RuntimeError) as e:
+        print(f"  [!!] Compose rendering failed: {e}")
+        sys.exit(1)
+
+    print("\nConfiguration is valid and ready for 'slipway up'.")
+
+
+def cmd_doctor(args: argparse.Namespace) -> None:
+    """Check the local prerequisites before a potentially noisy `up`."""
+    checks = []
+    config = None
+    stack = None
+    try:
+        config = cfg.load_config()
+        stack = get_stack(config["stack"])
+        checks.append((True, f"{cfg.CONFIG_FILENAME} is valid ({config['stack']})"))
+    except (SlipwayError, KeyError) as e:
+        msg = str(e) if not isinstance(e, SlipwayError) else e.message
+        checks.append((False, f"{cfg.CONFIG_FILENAME} is missing or invalid: {msg}"))
+
+    docker_path = shutil.which("docker")
+    if not docker_path:
+        checks.append((False, "Docker CLI is not installed or not on PATH"))
+    else:
+        result = subprocess.run(
+            ["docker", "compose", "version"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+        )
+        checks.append((result.returncode == 0, "Docker Compose v2 is available"))
+
+    if config and stack:
+        # Check for stale compose file
+        compose_path = _resolve_compose_file()
+        if compose_path and compose_path.exists():
+            current_compose = stack.compose_yaml(config)
+            if compose_path.read_text(encoding="utf-8") != current_compose:
+                checks.append(
+                    (
+                        False,
+                        f"{compose_path.name} is stale (out of sync with {cfg.CONFIG_FILENAME})",
+                    )
+                )
+            else:
+                checks.append((True, f"{compose_path.name} is up to date"))
+        else:
+            checks.append((True, f"{GENERATED_COMPOSE} will be generated on 'up'"))
+
+        # Check for port conflicts
+        port_conflict = False
+        for service, settings in config.get("services", {}).items():
+            port = settings.get("port")
+            if port:
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    if s.connect_ex(("localhost", int(port))) == 0:
+                        checks.append(
+                            (False, f"Port {port} (used by {service}) is already in use on host")
+                        )
+                        port_conflict = True
+        if not port_conflict:
+            checks.append((True, "No host port conflicts detected"))
+
+    # Check for free disk space (warn below 2 GB)
+    try:
+        usage = shutil.disk_usage(".")
+        free_gb = usage.free / (1024**3)
+        if free_gb < 2:
+            checks.append((False, f"Low disk space: {free_gb:.2f} GB remaining (warn below 2 GB)"))
+        else:
+            checks.append((True, f"Sufficient disk space: {free_gb:.2f} GB remaining"))
+    except (OSError, PermissionError) as e:
+        checks.append((False, f"Could not check disk space: {e}"))
+
+    if getattr(args, "fix", False) and config and stack:
+        # Repair .env.example
+        example_path = pathlib.Path(GENERATED_ENV_EXAMPLE)
+        if not example_path.exists():
+            example_path.write_text(env_example(stack.env_file(config)), encoding="utf-8")
+            checks.append((True, f"Repaired missing {GENERATED_ENV_EXAMPLE}"))
+
+        # Repair stale compose file
+        compose_path = _resolve_compose_file() or pathlib.Path(GENERATED_COMPOSE)
+        if compose_path.exists():
+            current_compose = stack.compose_yaml(config)
+            if compose_path.read_text(encoding="utf-8") != current_compose:
+                compose_path.write_text(current_compose, encoding="utf-8")
+                checks.append((True, f"Updated stale {compose_path.name}"))
+
+    console.print(
+        Panel("[bold cyan]slipway doctor[/bold cyan]\nChecking system prerequisites", expand=False)
+    )
+
+    # Use a rich table for the results
+    table = Table(show_header=True, header_style="bold magenta")
+    table.add_column("Status", width=10)
+    table.add_column("Check")
+    table.add_column("Hint", style="dim")
+
+    all_passed = True
+    for passed, message in checks:
+        status = "[bold green]OK[/bold green]" if passed else "[bold red]!![/bold red]"
+        hint = "" if passed else "Check Docker/Config"
+        table.add_row(status, message, hint)
+        if not passed:
+            all_passed = False
+
+    console.print(table)
+
+    if not all_passed:
+        rprint("\n[bold red]Fix the items marked !!, then run slipway doctor again.[/bold red]")
+        sys.exit(1)
+
+    rprint("\n[bold green]Ready. Run slipway up to start your environment.[/bold green]")
+
+
+def _generate_files(config: Mapping[str, Any], write: bool = True):
+    stack = get_stack(config["stack"])
+    compose_text = stack.compose_yaml(config)
+    env_text = stack.env_file(config)
+
+    files = {
+        GENERATED_COMPOSE: compose_text,
+        GENERATED_ENV: env_text,
+        GENERATED_ENV_EXAMPLE: env_example(env_text),
+    }
+    if write:
+        for filename, contents in files.items():
+            pathlib.Path(filename).write_text(contents, encoding="utf-8")
+    else:
+        print("[dry-run] generated files:")
+        for filename, contents in files.items():
+            print(f"\n--- {filename} ---\n{contents}", end="")
+    return stack
+
+
+def cmd_up(args: argparse.Namespace) -> None:
+    _require_docker()
+    try:
+        config = cfg.load_config()
+    except ConfigNotFoundError as e:
+        raise ConfigNotFoundError(
+            f"Configuration file {cfg.CONFIG_FILENAME} not found.",
+            hint="Run `slipway init <stack>` first.",
+        ) from e
+    stack = _generate_files(config, write=not args.dry_run)
+    if args.dry_run:
+        print("\n[dry-run] Docker Compose was not started.")
+        return
+
+    print(f"Starting '{config['project']}' ({config['stack']}) with Docker Compose...")
+    print("  [1/2] Generated Compose and environment files")
+    print("  [2/2] Starting containers")
+    result = subprocess.run(
+        ["docker", "compose", "-f", GENERATED_COMPOSE, "up", "-d"],
+        check=False,
+    )
+    if result.returncode != 0:
+        print("\nDocker Compose could not start the environment.")
+        print("Check that Docker Desktop is running and that the configured host ports are free.")
+        sys.exit(result.returncode)
+
+    print(
+        f"\nCopied service URLs into {GENERATED_ENV} — copy the values you need into your app's .env."
+    )
+    print("\nUp and running. A few notes:")
+    for hint in stack.post_up_hints(config):
+        print(f"  - {hint}")
+    print("\nRun 'slipway down' to stop, or 'slipway cleanup' to also remove data volumes.")
+
+
+def _require_compose_file() -> pathlib.Path:
+    compose_file = _resolve_compose_file()
+    if not compose_file:
+        raise ConfigNotFoundError(
+            "No generated Compose file found.", hint="Run `slipway up` first."
+        )
+    return compose_file
+
+
+def cmd_down(_args: argparse.Namespace) -> None:
+    _require_docker()
+    compose_file = _resolve_compose_file()
+    if not compose_file:
+        print("Nothing to stop — no generated compose file found. Did you run 'slipway up'?")
+        sys.exit(1)
+    result = subprocess.run(["docker", "compose", "-f", str(compose_file), "down"], check=False)
+    sys.exit(result.returncode)
+
+
+def cmd_status(_args: argparse.Namespace) -> None:
+    _require_docker()
+    compose_file = _require_compose_file()
+    result = subprocess.run(["docker", "compose", "-f", str(compose_file), "ps"], check=False)
+    sys.exit(result.returncode)
+
+
+def cmd_logs(args: argparse.Namespace) -> None:
+    _require_docker()
+    compose_file = _require_compose_file()
+    command = ["docker", "compose", "-f", str(compose_file), "logs"]
+    if args.follow:
+        command.append("--follow")
+    if args.service:
+        command.append(args.service)
+    result = subprocess.run(command, check=False)
+    sys.exit(result.returncode)
+
+
+def cmd_cleanup(_args: argparse.Namespace) -> None:
+    _require_docker()
+    for compose_name in (GENERATED_COMPOSE, LEGACY_GENERATED_COMPOSE):
+        compose_path = pathlib.Path(compose_name)
+        if compose_path.exists():
+            result = subprocess.run(
+                ["docker", "compose", "-f", str(compose_path), "down", "-v"], check=False
+            )
+            if result.returncode != 0:
+                sys.exit(result.returncode)
+            compose_path.unlink(missing_ok=True)
+    for env_name in (GENERATED_ENV, LEGACY_GENERATED_ENV):
+        pathlib.Path(env_name).unlink(missing_ok=True)
+    pathlib.Path(GENERATED_ENV_EXAMPLE).unlink(missing_ok=True)
+    print("Containers, volumes, and generated files removed. Configuration is left untouched.")
+
+
+def cmd_export(args: argparse.Namespace) -> None:
+    config = cfg.load_config()
+    stack = get_stack(config["stack"])
+    compose_text = stack.compose_yaml(config)
+    env_text = stack.env_file(config)
+
+    compose_out = getattr(args, "out", "docker-compose.yml") or "docker-compose.yml"
+    env_out = getattr(args, "env_out", ".env") or ".env"
+
+    pathlib.Path(compose_out).write_text(compose_text, encoding="utf-8")
+    pathlib.Path(env_out).write_text(env_text, encoding="utf-8")
+
+    print("\nExported standalone Docker Compose assets:")
+    print(f"  - Compose file: {compose_out}")
+    print(f"  - Environment file: {env_out}")
+
+
+def build_parser():
+    parser = argparse.ArgumentParser(
+        prog="slipway",
+        description="Spin up a local dev environment from a single config file.",
+    )
+    parser.add_argument(
+        "--debug", action="store_true", help="Show full traceback on unexpected errors"
+    )
+
+    parser.add_argument("--version", "-v", action="version", version=f"slipway v{__version__}")
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    p_version = sub.add_parser("version", help="Show slipway CLI version")
+    p_version.set_defaults(func=cmd_version)
+
+    p_list = sub.add_parser("list", help="List available stack templates")
+    p_list.set_defaults(func=cmd_list)
+
+    p_validate = sub.add_parser("validate", help="Validate slipway.yaml schema and stack setup")
+    p_validate.set_defaults(func=cmd_validate)
+
+    p_doctor = sub.add_parser("doctor", help="Check Docker and the current project config")
+    p_doctor.add_argument("--fix", action="store_true", help="Auto-repair safe missing items")
+    p_doctor.set_defaults(func=cmd_doctor)
+
+    p_init = sub.add_parser("init", help="Create a slipway.yaml for a stack in this directory")
+    p_init.add_argument("stack", help="Stack template name (see 'slipway list')")
+    p_init.add_argument(
+        "--name", dest="project_name", default=None, help="Project name (default: folder name)"
+    )
+    p_init.add_argument("--force", action="store_true", help="Overwrite an existing slipway.yaml")
+    p_init.add_argument("--dry-run", action="store_true", help="Preview files without writing them")
+    p_init.set_defaults(func=cmd_init)
+
+    p_create = sub.add_parser("create", help="Interactively create a project environment")
+    p_create.add_argument(
+        "--name", dest="project_name", default=None, help="Project name (default: folder name)"
+    )
+    p_create.add_argument(
+        "--force", action="store_true", help="Overwrite an existing slipway.yaml"
+    )
+    p_create.add_argument(
+        "--dry-run", action="store_true", help="Preview files without writing them"
+    )
+    p_create.set_defaults(func=cmd_create)
+
+    p_up = sub.add_parser(
+        "up", help="Generate compose files from slipway.yaml and start everything"
+    )
+    p_up.add_argument(
+        "--dry-run", action="store_true", help="Preview generated files without starting Docker"
+    )
+    p_up.set_defaults(func=cmd_up)
+
+    p_down = sub.add_parser("down", help="Stop containers (keeps data volumes)")
+    p_down.set_defaults(func=cmd_down)
+
+    p_status = sub.add_parser("status", help="Show the status of running services")
+    p_status.set_defaults(func=cmd_status)
+
+    p_logs = sub.add_parser("logs", help="Show service logs")
+    p_logs.add_argument("service", nargs="?", help="Optional service name, such as app or postgres")
+    p_logs.add_argument("--follow", "-f", action="store_true", help="Keep streaming new log output")
+    p_logs.set_defaults(func=cmd_logs)
+
+    p_cleanup = sub.add_parser(
+        "cleanup", help="Stop containers, delete volumes and generated files"
+    )
+    p_cleanup.set_defaults(func=cmd_cleanup)
+
+    p_export = sub.add_parser(
+        "export", help="Export standalone Docker Compose and environment files"
+    )
+    p_export.add_argument(
+        "--out", "-o", default="docker-compose.yml", help="Target Compose output path"
+    )
+    p_export.add_argument("--env-out", default=".env", help="Target env output path")
+    p_export.set_defaults(func=cmd_export)
+
+    return parser
+
+
+def deprecated_alias_main() -> None:
+    console.print(
+        "[bold yellow]Deprecation Notice:[/bold yellow] "
+        "[dim]'devspeed' has been renamed to 'slipway'. Please update your commands and scripts to use 'slipway'.[/dim]\n"
+    )
+    main()
+
+
+def main() -> None:
+    parser = build_parser()
+    args = parser.parse_args()
+
+    try:
+        args.func(args)
+    except KeyboardInterrupt:
+        rprint("\n[bold yellow]Operation cancelled by user.[/bold yellow]")
+        sys.exit(130)
+    except SlipwayError as e:
+        console.print(f"[bold red]Error:[/bold red] {e.message}")
+        if e.hint:
+            console.print(f"[dim]{e.hint}[/dim]")
+        sys.exit(e.exit_code)
+    except (RuntimeError, SystemError) as e:
+        if getattr(args, "debug", False):
+            import traceback
+
+            traceback.print_exc()
+        else:
+            rprint(f"[bold red]Unexpected error:[/bold red] {e}")
+            rprint("[dim]Run with --debug for the full traceback[/dim]")
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
