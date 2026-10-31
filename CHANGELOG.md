@@ -15,6 +15,16 @@
 
 * **build:** correct package names in pyproject.toml for krickstart rename ([b957618](https://github.com/ZitouniNidhal/Krickstart/commit/b957618fed857ced5cea3f737cd61e5c31687404))
 * **docker:** copy krickstart folder and update license SPDX expression ([355fcd5](https://github.com/ZitouniNidhal/Krickstart/commit/355fcd52bdeb733f0336ed998320814ba56185a5))
+* **docker:** ensure correct Dockerfile for krickstart build ([195897d](https://github.com/ZitouniNidhal/Krickstart/commit/195897dd7587eb09fd297ccc152f63fd15601c07))
+* **packaging:** remove deprecated license classifier ([1155555](https://github.com/ZitouniNidhal/Krickstart/commit/1155555868870022988d30222647ad3fc3bb8594))
+
+## [1.4.1](https://github.com/ZitouniNidhal/Krickstart/compare/v1.4.0...v1.4.1) (2026-10-31)
+
+
+### Bug Fixes
+
+* **build:** correct package names in pyproject.toml for krickstart rename ([b957618](https://github.com/ZitouniNidhal/Krickstart/commit/b957618fed857ced5cea3f737cd61e5c31687404))
+* **docker:** copy krickstart folder and update license SPDX expression ([355fcd5](https://github.com/ZitouniNidhal/Krickstart/commit/355fcd52bdeb733f0336ed998320814ba56185a5))
 
 ## [1.4.1](https://github.com/ZitouniNidhal/Krickstart/compare/v1.4.0...v1.4.1) (2026-10-31)
 
