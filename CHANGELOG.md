@@ -1,3 +1,11 @@
+# [1.4.0](https://github.com/ZitouniNidhal/Krickstart/compare/v1.3.0...v1.4.0) (2026-10-31)
+
+
+### Features
+
+* rename project to krickstart ([4de9d64](https://github.com/ZitouniNidhal/Krickstart/commit/4de9d64b8b92408e22ec425f4012bcdd0e1a4c4a))
+* rename project to krickstart and update entry points ([fbe1717](https://github.com/ZitouniNidhal/Krickstart/commit/fbe1717385e34f4457e39300ed2f8b64c68adf0f))
+
 # [1.3.0](https://github.com/ZitouniNidhal/devspeed/compare/v1.2.0...v1.3.0) (2026-10-31)
 
 
