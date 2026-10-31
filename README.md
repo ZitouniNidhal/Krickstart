@@ -1,34 +1,34 @@
-# ⚡ devspeed 
+# ⚡ Krickstart 
 
 **Spin up a reproducible local development environment in seconds.**
 
-[![Build](https://img.shields.io/github/actions/workflow/status/ZitouniNidhal/devspeed/ci.yml?branch=master&label=build)](https://github.com/ZitouniNidhal/devspeed/actions)
-[![PyPI](https://img.shields.io/pypi/v/devspeed.svg)](https://pypi.org/project/devspeed/)
+[![Build](https://img.shields.io/github/actions/workflow/status/ZitouniNidhal/Krickstart/ci.yml?branch=master&label=build)](https://github.com/ZitouniNidhal/Krickstart/actions)
+[![PyPI](https://img.shields.io/pypi/v/krickstart.svg)](https://pypi.org/project/krickstart/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)](https://pypi.org/project/devspeed/)
+[![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)](https://pypi.org/project/krickstart/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-`devspeed` is an opinionated, high-performance CLI tool that turns a concise `devspeed.yaml` recipe into a fully operational, reproducible Docker Compose environment. It eliminates the "it works on my machine" struggle by automating starter templates, database wiring, environment contracts, and connection URL generation.
+`krickstart` is an opinionated, high-performance CLI tool that turns a concise `krickstart.yaml` recipe into a fully operational, reproducible Docker Compose environment. It eliminates the "it works on my machine" struggle by automating starter templates, database wiring, environment contracts, and connection URL generation.
 
 **Stop debugging ports, volumes, and health checks. Start building.**
 
 ```text
-devspeed.yaml  ➔  devspeed up  ➔  🚀 Ready-to-code Stack (App + Database + URLs)
+krickstart.yaml  ➔  krickstart up  ➔  🚀 Ready-to-code Stack (App + Database + URLs)
 ```
 
 ---
 
 ## 🏛️ Architecture Overview
 
-`devspeed` sits as a declarative translation layer between your team's configuration contract and Docker Compose:
+`krickstart`  sits as a declarative translation layer between your team's configuration contract and Docker Compose
 
 ```mermaid
 flowchart TD
     subgraph User Workspace
-        YAML["devspeed.yaml\n(Team Contract)"]
-        CLI["devspeed CLI\n(create / doctor / up / down)"]
+        YAML["krickstart.yaml\n(Team Contract)"]
+        CLI["krickstart CLI\n(create / doctor / up / down)"]
     end
 
     subgraph Core Engine
@@ -38,8 +38,8 @@ flowchart TD
     end
 
     subgraph Generated Outputs
-        DC["docker-compose.devspeed.yml\n(Services, Volumes, Healthchecks)"]
-        ENV[".env.devspeed\n(DATABASE_URL, REDIS_URL)"]
+        DC["docker-compose.krickstart.yml\n(Services, Volumes, Healthchecks)"]
+        ENV[".env.krickstart\n(DATABASE_URL, REDIS_URL)"]
         EX[".env.example\n(Masked Team Template)"]
     end
 
@@ -60,9 +60,9 @@ flowchart TD
 
 ---
 
-## 📊 devspeed vs. Alternatives
+## 📊 Krickstart vs. Alternatives
 
-| Capability | ⚡ devspeed | Docker Compose | VS Code Dev Containers | Tilt | Nix / devenv |
+| Capability | ⚡ Krickstart | Docker Compose | VS Code Dev Containers | Tilt | Nix / devenv |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Instant Starters** | ✅ Built-in Stacks | ❌ Manual Setup | ⚠️ Template repos | ❌ Manual Tiltfile | ⚠️ Custom flake |
 | **Configuration Complexity** | 🟢 Low (~15 lines YAML) | 🔴 High (verbose Compose) | 🟡 Medium (`devcontainer.json`) | 🔴 High (Starlark/Tiltfile) | 🔴 High (Nix language) |
@@ -86,33 +86,33 @@ Install via your preferred Python tool manager:
 
 ```bash
 # Recommended (isolated CLI application)
-pipx install devspeed
+pipx install krickstart
 # or with uv:
-uv tool install devspeed
+uv tool install krickstart
 
 # Or with standard pip
-pip install devspeed
+pip install krickstart
 ```
 
 ### 30-Second Setup
 
 ```bash
 # 1. Interactively choose a stack (e.g. FastAPI + PostgreSQL)
-devspeed create
+krickstart create
 
 # 2. Check local environment and port availability
-devspeed doctor
+krickstart doctor
 
 # 3. Launch isolated environment
-devspeed up
+krickstart up
 ```
 
 ### Scripted / CI Workflow
 
 ```bash
-devspeed init fastapi-postgres --name billing-api
-devspeed doctor
-devspeed up
+krickstart init fastapi-postgres --name billing-api
+krickstart doctor
+krickstart up
 ```
 
 ---
@@ -137,31 +137,31 @@ All maintained stacks feature health checks, volume persistence, and loopback se
 
 | Command | Description |
 | :--- | :--- |
-| `devspeed list` | Show all available stack templates and descriptions |
-| `devspeed init <stack>` | Generate `devspeed.yaml` and starter files for a chosen stack |
-| `devspeed create` | Interactive terminal wizard to pick and initialize a stack |
-| `devspeed validate` | Validate schema and ensure stack plugin can render without errors |
-| `devspeed doctor` | Health-check Docker, Compose v2, YAML syntax, and detect port conflicts |
-| `devspeed doctor --fix` | Automatically repair missing safe assets (e.g., regenerate `.env.example`) |
-| `devspeed up` | Render Compose files and start containers in detached mode |
-| `devspeed up --dry-run` | Preview generated YAML and `.env` files without writing or starting Docker |
-| `devspeed down` | Gracefully stop containers (preserves database volumes) |
-| `devspeed status` | Display container runtime health and port mappings (`docker compose ps`) |
-| `devspeed logs [service]` | View or follow service logs (`--follow` supported) |
-| `devspeed export` | Export standalone `docker-compose.yml` and `.env` for production or CI |
-| `devspeed cleanup` | Stop containers, remove named volumes, and clean up generated files |
+| `krickstart list` | Show all available stack templates and descriptions |
+| `krickstart init <stack>` | Generate `krickstart.yaml` and starter files for a chosen stack |
+| `krickstart create` | Interactive terminal wizard to pick and initialize a stack |
+| `krickstart validate` | Validate schema and ensure stack plugin can render without errors |
+| `krickstart doctor` | Health-check Docker, Compose v2, YAML syntax, and detect port conflicts |
+| `krickstart doctor --fix` | Automatically repair missing safe assets (e.g., regenerate `.env.example`) |
+| `krickstart up` | Render Compose files and start containers in detached mode |
+| `krickstart up --dry-run` | Preview generated YAML and `.env` files without writing or starting Docker |
+| `krickstart down` | Gracefully stop containers (preserves database volumes) |
+| `krickstart status` | Display container runtime health and port mappings (`docker compose ps`) |
+| `krickstart logs [service]` | View or follow service logs (`--follow` supported) |
+| `krickstart export` | Export standalone `docker-compose.yml` and `.env` for production or CI |
+| `krickstart cleanup` | Stop containers, remove named volumes, and clean up generated files |
 
 ---
 
 ## 🔒 Security Best Practices
 
-1. **Loopback Isolation (`127.0.0.1`)**: `devspeed` binds container ports to `127.0.0.1` by default rather than `0.0.0.0`, protecting databases and internal APIs from exposure on public Wi-Fi or local networks.
+1. **Loopback Isolation (`127.0.0.1`)**: `krickstart` binds container ports to `127.0.0.1` by default rather than `0.0.0.0`, protecting databases and internal APIs from exposure on public Wi-Fi or local networks.
 2. **Masked Examples**: Generated `.env.example` templates automatically redact credentials so teammates can safely commit environment templates to git without leaking passwords.
 3. **Never Commit Generated Files**:
    Add to your `.gitignore`:
    ```gitignore
-   docker-compose.devspeed.yml
-   .env.devspeed
+   docker-compose.krickstart.yml
+   .env.krickstart
    .env
    ```
 
@@ -169,12 +169,12 @@ All maintained stacks feature health checks, volume persistence, and loopback se
 
 ## 🔌 Plugin System & Extensibility
 
-`devspeed` provides an open plugin interface using Python entry points. Organizations can package internal corporate stacks and publish them as private or public packages.
+`krickstart` provides an open plugin interface using Python entry points. Organizations can package internal corporate stacks and publish them as private or public packages.
 
-Third-party packages expose plugins via the `devspeed.stacks` entry point group in `pyproject.toml`:
+Third-party packages expose plugins via the `krickstart.stacks` entry point group in `pyproject.toml`:
 
 ```toml
-[project.entry-points."devspeed.stacks"]
+[project.entry-points."krickstart.stacks"]
 company-microservice = "my_company_stacks.microservice:MicroservicePlugin"
 ```
 
