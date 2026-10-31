@@ -1,10 +1,11 @@
-"""Legacy compatibility package alias for krickstart."""
 
 from __future__ import annotations
 
 import warnings
 
-from krickstart import PLUGIN_API_VERSION, StackPlugin, __version__
+from krickstart.plugins.base import StackPlugin
+__version__ = "1.2.0"
+PLUGIN_API_VERSION = "1.0"
 
 warnings.warn(
     "'krickstart' has been renamed to 'krickstart'. Please update imports to 'krickstart'.",
