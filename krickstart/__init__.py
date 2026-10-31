@@ -4,6 +4,7 @@ from __future__ import annotations
 import warnings
 
 from krickstart.plugins.base import StackPlugin
+
 __version__ = "1.2.0"
 PLUGIN_API_VERSION = "1.0"
 
