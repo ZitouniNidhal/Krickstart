@@ -67,17 +67,8 @@ laravel-mysql = "krickstart.stacks.laravel_mysql:plugin"
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-packages = [
-    "krickstart",
-    "krickstart.core",
-    "krickstart.plugins",
-    "krickstart.stacks",
-    "devspeed",
-    "devspeed.core",
-    "devspeed.plugins",
-    "devspeed.stacks",
-]
+[tool.setuptools.packages.find]
+include = ["krickstart*", "devspeed*"]
 
 [tool.black]
 line-length = 100
