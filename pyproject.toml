@@ -49,7 +49,6 @@ dev = [
 
 [project.scripts]
 krickstart = "krickstart.cli:main"
-devspeed = "devspeed.cli:main"
 
 [project.entry-points."krickstart.stacks"]
 node-postgres-redis = "krickstart.stacks.node_postgres_redis:plugin"
@@ -67,8 +66,13 @@ laravel-mysql = "krickstart.stacks.laravel_mysql:plugin"
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools.packages.find]
-include = ["krickstart*", "devspeed*"]
+[tool.setuptools]
+packages = [
+    "krickstart",
+    "krickstart.core",
+    "krickstart.plugins",
+    "krickstart.stacks",
+]
 
 [tool.black]
 line-length = 100
