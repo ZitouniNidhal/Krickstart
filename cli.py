@@ -1,5 +1,5 @@
-import warnings
 import sys
+import warnings
 
 def main():
     warnings.warn(
