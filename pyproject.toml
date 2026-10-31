@@ -1,6 +1,6 @@
 [project]
 name = "krickstart"
-version = "1.2.0"
+version = "1.2.1"
 description = "Lightning-fast local dev environment manager powered by Docker Compose"
 readme = "README.md"
 license = "MIT"
