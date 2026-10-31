@@ -5,7 +5,7 @@
 [![Build](https://img.shields.io/github/actions/workflow/status/ZitouniNidhal/devspeed/ci.yml?branch=master&label=build)](https://github.com/ZitouniNidhal/devspeed/actions)
 [![PyPI](https://img.shields.io/pypi/v/devspeed.svg)](https://pypi.org/project/devspeed/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)](https://pypi.org/project/devspeed/)
+[![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)](https://pypi.org/project/devspeed/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
@@ -77,7 +77,7 @@ flowchart TD
 ## 🚀 Quick Start
 
 ### Prerequisites
-- **Python 3.9+** (Python 3.10+ recommended)
+- **Python 3.10+**
 - **Docker Desktop** or Docker Engine with Docker Compose v2
 
 ### Installation
