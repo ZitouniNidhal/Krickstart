@@ -59,7 +59,6 @@ jobs:
           path: dist/
 
       - name: Publish distributions to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
 
   github-release:
     name: Create GitHub release
