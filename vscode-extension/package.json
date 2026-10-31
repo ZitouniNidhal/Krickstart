@@ -1,0 +1,46 @@
+{
+  "name": "devspeed",
+  "displayName": "DevSpeed",
+  "description": "Spin up professional local development environments in seconds.",
+  "version": "0.1.0",
+  "publisher": "nidhal-zitouni",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "devspeed.up",
+        "title": "DevSpeed: Up"
+      },
+      {
+        "command": "devspeed.init",
+        "title": "DevSpeed: Init"
+      },
+      {
+        "command": "devspeed.doctor",
+        "title": "DevSpeed: Doctor"
+      },
+      {
+        "command": "devspeed.cleanup",
+        "title": "DevSpeed: Cleanup"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^18.x",
+    "@types/vscode": "^1.80.0",
+    "typescript": "^5.0.0"
+  }
+}

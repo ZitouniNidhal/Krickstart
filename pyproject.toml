@@ -1,6 +1,6 @@
 [project]
 name = "devspeed"
-version = "0.1.0"
+version = "1.1.0"
 description = "Lightning-fast local dev environment manager powered by Docker Compose"
 readme = "README.md"
 license = { text = "MIT" }
@@ -25,7 +25,9 @@ classifiers = [
     "Topic :: Utilities",
 ]
 dependencies = [
+    "pydantic>=2.0",
     "pyyaml>=6.0",
+    "rich>=13.0",
 ]
 
 [project.urls]
@@ -58,6 +60,9 @@ flask-postgres = "devspeed.stacks.flask_postgres:plugin"
 nextjs-postgres = "devspeed.stacks.nextjs_postgres:plugin"
 go-gin-postgres = "devspeed.stacks.go_gin_postgres:plugin"
 spring-boot-postgres = "devspeed.stacks.spring_boot_postgres:plugin"
+express-mongodb = "devspeed.stacks.express_mongodb:plugin"
+spring-boot-mysql = "devspeed.stacks.spring_boot_mysql:plugin"
+laravel-mysql = "devspeed.stacks.laravel_mysql:plugin"
 
 [build-system]
 requires = ["setuptools>=61.0"]

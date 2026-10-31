@@ -1,4 +1,4 @@
-# ⚡ devspeed
+# ⚡ devspeed 
 
 **Spin up a reproducible local development environment in seconds.**
 
@@ -184,8 +184,20 @@ Plugins implement the `StackPlugin` interface (`name`, `description`, `default_c
 
 ## 🤝 Contributing
 
-We welcome community contributions, bug reports, and stack submissions!
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) and our [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) before opening a PR.
+We love contributions! Whether it's a new stack template, a bug fix, or documentation improvement, please check out our [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+
+**Ways to help:**
+- 🌟 **Star the repo** to show your support.
+- 🐛 **Report bugs** or request features in the Issues tab.
+- 🛠️ **Build a plugin** and share your custom stack with the community.
+- 📝 **Improve docs** to help other developers get started faster.
+
+## 📖 Guides
+For detailed instructions, explore our documentation:
+- [🚀 Getting Started](./docs/getting-started.md) - From installation to your first stack.
+- [🛠️ Custom Stacks](./docs/custom-stacks.md) - How to extend devspeed with your own templates.
+- [🔍 Troubleshooting](./docs/troubleshooting.md) - Solving common Docker and config issues.
+
 
 ```bash
 # Run local test suite and quality gates:

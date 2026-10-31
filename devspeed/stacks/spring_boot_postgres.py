@@ -52,11 +52,11 @@ services:
   app:
     image: eclipse-temurin:21-jdk-alpine
     ports:
-      - "{app['port']}:8080"
+      - "{app["port"]}:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/{postgres['db']}
-      - SPRING_DATASOURCE_USERNAME={postgres['user']}
-      - SPRING_DATASOURCE_PASSWORD={postgres['password']}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/{postgres["db"]}
+      - SPRING_DATASOURCE_USERNAME={postgres["user"]}
+      - SPRING_DATASOURCE_PASSWORD={postgres["password"]}
     depends_on:
       postgres:
         condition: service_healthy

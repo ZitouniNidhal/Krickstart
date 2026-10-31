@@ -25,14 +25,15 @@ def postgres_service_yaml(
     image: postgres:16-alpine
     ports:
       - \"127.0.0.1:{postgres['port']}:5432\"
+
     environment:
-      - POSTGRES_DB={postgres['db']}
-      - POSTGRES_USER={postgres['user']}
-      - POSTGRES_PASSWORD={postgres['password']}
+      - POSTGRES_DB={postgres["db"]}
+      - POSTGRES_USER={postgres["user"]}
+      - POSTGRES_PASSWORD={postgres["password"]}
 {database_line}    volumes:
       - {project}_pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: [\"CMD-SHELL\", \"pg_isready -U {postgres['user']}\"]
+      test: [\"CMD-SHELL\", \"pg_isready -U {postgres["user"]}\"]
       interval: 3s
       timeout: 3s
       retries: 10

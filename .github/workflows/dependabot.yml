@@ -1,0 +1,12 @@
+name: Dependabot
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  dependabot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dependabot is managed via .github/dependabot.yml
+        run: echo "Please ensure .github/dependabot.yml exists for automatic updates."
