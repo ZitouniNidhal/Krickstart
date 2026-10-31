@@ -1,9 +1,13 @@
-"""Backward-compatible imports for the pre-1.0 plugin module path."""
+"""Backward-compatibility aliases for devspeed.plugin."""
 
-from devspeed.plugins.base import PLUGIN_API_VERSION, PluginError, StackPlugin
-from devspeed.plugins.registry import (
+from __future__ import annotations
+
+from slipway.plugin import (
     ENTRY_POINT_GROUP,
+    PLUGIN_API_VERSION,
+    PluginError,
     PluginRegistry,
+    StackPlugin,
     builtin_registry,
     discover_pypi_stack_packages,
     pypi_package_metadata,
