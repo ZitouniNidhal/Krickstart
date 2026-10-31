@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 import yaml
 
-from devspeed.core.compose_generator import (
+from krickstart.core.compose_generator import (
     ComposeGenerationError,
     ComposeGenerator,
     ConfigValidationError,
@@ -21,8 +21,8 @@ from devspeed.core.compose_generator import (
     PluginResolutionError,
     PortConflictError,
 )
-from devspeed.plugins.base import StackPlugin
-from devspeed.plugins.registry import PluginRegistry
+from krickstart.plugins.base import StackPlugin
+from krickstart.plugins.registry import PluginRegistry
 
 
 class InvalidYamlPlugin(StackPlugin):
@@ -188,7 +188,7 @@ class ComposeGeneratorTests(unittest.TestCase):
         self.assertIn("app", document["services"])
 
     def test_compose_output_contains_managed_network(self) -> None:
-        """Add the shared DevSpeed network to generated Compose output."""
+        """Add the shared krickstart network to generated Compose output."""
         artifacts = self.generator.generate(self.fastapi_config())
         document = yaml.safe_load(artifacts.compose_yaml)
         self.assertIn("devspeed_network", document["networks"])

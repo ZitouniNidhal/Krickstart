@@ -7,7 +7,7 @@ from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
 
-from devspeed import cli, config
+from krickstart import cli, config
 
 
 class CliTests(unittest.TestCase):
@@ -20,7 +20,7 @@ class CliTests(unittest.TestCase):
             finally:
                 os.chdir(original_directory)
 
-            self.assertTrue((Path(directory) / "devspeed.yaml").exists())
+            self.assertTrue((Path(directory) / "krickstart.yaml").exists())
             self.assertTrue((Path(directory) / "main.py").exists())
             self.assertTrue((Path(directory) / "requirements.txt").exists())
 
@@ -77,8 +77,8 @@ class CliTests(unittest.TestCase):
                 config.save_config(cli.get_stack("fastapi-postgres").default_config("demo"))
                 completed = type("Completed", (), {"returncode": 0})()
                 with (
-                    patch("devspeed.cli.shutil.which", return_value="docker"),
-                    patch("devspeed.cli.subprocess.run", return_value=completed) as run,
+                    patch("krickstart.cli.shutil.which", return_value="docker"),
+                    patch("krickstart.cli.subprocess.run", return_value=completed) as run,
                 ):
                     cli.cmd_up(Namespace(dry_run=False))
                 self.assertEqual(run.call_args.args[0][-2:], ["up", "-d"])
@@ -96,8 +96,8 @@ class CliTests(unittest.TestCase):
                 Path(cli.GENERATED_COMPOSE).write_text("services: {}\n")
                 completed = type("Completed", (), {"returncode": 0})()
                 with (
-                    patch("devspeed.cli.shutil.which", return_value="docker"),
-                    patch("devspeed.cli.subprocess.run", return_value=completed) as run,
+                    patch("krickstart.cli.shutil.which", return_value="docker"),
+                    patch("krickstart.cli.subprocess.run", return_value=completed) as run,
                 ):
                     with self.assertRaises(SystemExit) as down_exit:
                         cli.cmd_down(Namespace())
@@ -115,7 +115,7 @@ class CliTests(unittest.TestCase):
 
     def test_missing_docker_message_is_actionable(self):
         with (
-            patch("devspeed.cli.shutil.which", return_value=None),
+            patch("krickstart.cli.shutil.which", return_value=None),
             self.assertRaises(cli.DockerNotFoundError) as ctx,
         ):
             cli._require_docker()
@@ -147,7 +147,7 @@ class CliTests(unittest.TestCase):
             try:
                 with patch("builtins.input", side_effect=["3", "wizard-api"]):
                     cli.cmd_create(Namespace(project_name=None, force=False, dry_run=False))
-                self.assertIn("flask-postgres", Path("devspeed.yaml").read_text())
+                self.assertIn("flask-postgres", Path("krickstart.yaml").read_text())
             finally:
                 os.chdir(original_directory)
 
@@ -165,9 +165,9 @@ class CliTests(unittest.TestCase):
                 completed = type("Completed", (), {"returncode": 0})()
                 mock_usage = type("Usage", (), {"free": 50 * (1024**3)})()
                 with (
-                    patch("devspeed.cli.shutil.which", return_value="docker"),
-                    patch("devspeed.cli.subprocess.run", return_value=completed),
-                    patch("devspeed.cli.shutil.disk_usage", return_value=mock_usage),
+                    patch("krickstart.cli.shutil.which", return_value="docker"),
+                    patch("krickstart.cli.subprocess.run", return_value=completed),
+                    patch("krickstart.cli.shutil.disk_usage", return_value=mock_usage),
                 ):
                     cli.cmd_doctor(Namespace(fix=False))
                     cli.cmd_cleanup(Namespace())
@@ -182,7 +182,7 @@ class CliTests(unittest.TestCase):
         output = StringIO()
         with redirect_stdout(output):
             cli.cmd_version(Namespace())
-        self.assertIn("devspeed v", output.getvalue())
+        self.assertIn("krickstart v", output.getvalue())
 
     def test_cmd_validate_checks_valid_config(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -206,9 +206,9 @@ class CliTests(unittest.TestCase):
                 completed = type("Completed", (), {"returncode": 0})()
                 mock_usage = type("Usage", (), {"free": 50 * (1024**3)})()
                 with (
-                    patch("devspeed.cli.shutil.which", return_value="docker"),
-                    patch("devspeed.cli.subprocess.run", return_value=completed),
-                    patch("devspeed.cli.shutil.disk_usage", return_value=mock_usage),
+                    patch("krickstart.cli.shutil.which", return_value="docker"),
+                    patch("krickstart.cli.subprocess.run", return_value=completed),
+                    patch("krickstart.cli.shutil.disk_usage", return_value=mock_usage),
                 ):
                     cli.cmd_doctor(Namespace(fix=True))
 

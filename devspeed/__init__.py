@@ -1,13 +1,13 @@
-"""Legacy compatibility package alias for Slipway."""
+"""Legacy compatibility package alias for krickstart."""
 
 from __future__ import annotations
 
 import warnings
 
-from slipway import PLUGIN_API_VERSION, StackPlugin, __version__
+from krickstart import PLUGIN_API_VERSION, StackPlugin, __version__
 
 warnings.warn(
-    "'devspeed' has been renamed to 'slipway'. Please update imports to 'slipway'.",
+    "'krickstart' has been renamed to 'krickstart'. Please update imports to 'krickstart'.",
     DeprecationWarning,
     stacklevel=2,
 )

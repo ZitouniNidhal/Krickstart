@@ -3,7 +3,7 @@ from collections.abc import Mapping
 from typing import Any
 from unittest.mock import patch
 
-from devspeed.plugin import (
+from krickstart.plugin import (
     ENTRY_POINT_GROUP,
     PLUGIN_API_VERSION,
     PluginError,
@@ -39,7 +39,7 @@ class PluginTests(unittest.TestCase):
 
     def test_registry_discovers_entry_point_plugin(self):
         point = type("Point", (), {"name": "example", "load": lambda _self: ExamplePlugin()})()
-        with patch("devspeed.plugins.registry._entry_points", return_value=[point]):
+        with patch("krickstart.plugins.registry._entry_points", return_value=[point]):
             registry = PluginRegistry().discover()
         self.assertEqual(registry.get("example").description, "Example third-party stack")
 
@@ -50,7 +50,7 @@ class PluginTests(unittest.TestCase):
             PluginRegistry().register(plugin)
 
     def test_entry_point_group_is_stable(self):
-        self.assertEqual(ENTRY_POINT_GROUP, "devspeed.stacks")
+        self.assertEqual(ENTRY_POINT_GROUP, "krickstart.stacks")
 
     def test_registry_rejects_duplicate_names(self):
         registry = PluginRegistry()
@@ -67,13 +67,13 @@ class PluginTests(unittest.TestCase):
                 "load": lambda _self: (_ for _ in ()).throw(ImportError("missing dependency")),
             },
         )()
-        with patch("devspeed.plugins.registry._entry_points", return_value=[point]):
+        with patch("krickstart.plugins.registry._entry_points", return_value=[point]):
             registry = PluginRegistry().discover()
         self.assertEqual(registry.all(), [])
         self.assertIn("broken: missing dependency", registry.errors)
 
     def test_builtin_stack_contracts(self):
-        from devspeed.plugins.registry import builtin_registry
+        from krickstart.plugins.registry import builtin_registry
 
         registry = builtin_registry()
         for plugin in registry.all():
