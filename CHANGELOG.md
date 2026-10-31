@@ -1,3 +1,12 @@
+# [1.2.0](https://github.com/ZitouniNidhal/devspeed/compare/v1.1.0...v1.2.0) (2026-10-31)
+
+
+### Features
+
+* enhance CI/CD workflows with coverage uploads, package validation, and dependency auditing ([5d6df91](https://github.com/ZitouniNidhal/devspeed/commit/5d6df91dabef570c04cbf4f9588db48ed8a3ba7a))
+* enhance package metadata and documentation with audit findings and roadmap ([0e79978](https://github.com/ZitouniNidhal/devspeed/commit/0e7997853977e8e8dc617bea187605baeb41469a))
+* staff engineer audit fixes, loopback security, CI repair, and package metadata ([07edb2e](https://github.com/ZitouniNidhal/devspeed/commit/07edb2ef50e8b489332f4d2e40b49d6d5030f05e))
+
 # [1.1.0](https://github.com/ZitouniNidhal/devspeed/compare/v1.0.0...v1.1.0) (2026-10-19)
 
 
