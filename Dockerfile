@@ -21,4 +21,4 @@ RUN useradd -m -u 1000 appuser
 USER appuser
 
 ENTRYPOINT ["krickstart"]
-CMD ["--help"]
+CMD ["--help"] 
