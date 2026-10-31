@@ -1,8 +1,8 @@
-"""Backward-compatibility aliases for devspeed.config."""
+"""Backward-compatibility aliases for krickstart.config."""
 
 from __future__ import annotations
 
-from slipway.config import (
+from krickstart.config import (
     CONFIG_FILENAME,
     LEGACY_CONFIG_FILENAME,
     DevspeedConfig,

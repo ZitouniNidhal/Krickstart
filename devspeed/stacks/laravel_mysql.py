@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from devspeed.plugins.base import StackPlugin
+from krickstart.plugins.base import StackPlugin
 
 from .common import lifecycle_command
 
@@ -34,15 +34,15 @@ class LaravelMysqlPlugin(StackPlugin):
                 "mysql": {
                     "port": 3306,
                     "db": project_name.replace("-", "_"),
-                    "user": "devspeed",
-                    "password": "devspeed",
+                    "user": "krickstart",
+                    "password": "krickstart",
                 },
             },
         }
 
     def starter_files(self, config: Mapping[str, Any]) -> dict[str, str]:
         return {
-            "composer.json": '{\n  "name": "devspeed/laravel",\n  "require": { "laravel/framework": "^11.0" }\n}',
+            "composer.json": '{\n  "name": "krickstart/laravel",\n  "require": { "laravel/framework": "^11.0" }\n}',
             ".env": f"DB_CONNECTION=mysql\nDB_HOST=mysql\nDB_PORT=3306\nDB_DATABASE={config['services']['mysql']['db']}\nDB_USERNAME={config['services']['mysql']['user']}\nDB_PASSWORD={config['services']['mysql']['password']}\n",
         }
 

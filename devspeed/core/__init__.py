@@ -1,6 +1,6 @@
-"""Core generation services for DevSpeed (legacy alias)."""
+"""Core generation services for krickstart (legacy alias)."""
 
-from slipway.core.compose_generator import (
+from krickstart.core.compose_generator import (
     DEFAULT_COMPOSE_FILENAME,
     DEFAULT_ENV_FILENAME,
     ComposeGenerationError,

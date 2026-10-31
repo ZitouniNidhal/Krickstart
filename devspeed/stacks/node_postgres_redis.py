@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from devspeed.plugins.base import StackPlugin
+from krickstart.plugins.base import StackPlugin
 
 from .common import lifecycle_command
 
@@ -34,8 +34,8 @@ class NodePostgresRedisPlugin(StackPlugin):
                 "postgres": {
                     "port": 5432,
                     "db": project_name.replace("-", "_"),
-                    "user": "devspeed",
-                    "password": "devspeed",
+                    "user": "krickstart",
+                    "password": "krickstart",
                 },
                 "redis": {"port": 6379},
             },
@@ -45,7 +45,7 @@ class NodePostgresRedisPlugin(StackPlugin):
         """Return a minimal Express application for a new project."""
         return {
             "package.json": """{
-  "name": "devspeed-node-app",
+  "name": "krickstart-node-app",
   "private": true,
   "scripts": {"dev": "node server.js"},
   "dependencies": {"express": "^5.1.0"}
@@ -57,7 +57,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.get("/", (_request, response) => {
-  response.json({ message: "Your DevSpeed app is running", database: process.env.DATABASE_URL });
+  response.json({ message: "Your krickstart app is running", database: process.env.DATABASE_URL });
 });
 
 app.listen(port, "0.0.0.0", () => console.log(`API listening on ${port}`));

@@ -1,8 +1,8 @@
-"""Backward-compatibility aliases for devspeed.stacks."""
+"""Backward-compatibility aliases for krickstart.stacks."""
 
 from __future__ import annotations
 
-from slipway.stacks import (
+from krickstart.stacks import (
     STACKS,
     PluginRegistry,
     StackPlugin,

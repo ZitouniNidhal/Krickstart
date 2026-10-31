@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from devspeed.plugins.base import StackPlugin
+from krickstart.plugins.base import StackPlugin
 
 from .common import lifecycle_command, postgres_service_yaml
 
@@ -37,8 +37,8 @@ class FlaskPostgresPlugin(StackPlugin):
                 "postgres": {
                     "port": 5432,
                     "db": project_name.replace("-", "_"),
-                    "user": "devspeed",
-                    "password": "devspeed",
+                    "user": "krickstart",
+                    "password": "krickstart",
                 },
             },
         }
@@ -54,7 +54,7 @@ app = Flask(__name__)
 
 @app.get("/")
 def read_root():
-    return jsonify(message="Your DevSpeed app is running")
+    return jsonify(message="Your krickstart app is running")
 """,
         }
 

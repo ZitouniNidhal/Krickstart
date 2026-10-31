@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from devspeed.plugins.base import StackPlugin
+from krickstart.plugins.base import StackPlugin
 
 from .common import lifecycle_command, postgres_service_yaml
 
@@ -37,8 +37,8 @@ class FastAPIPostgresPlugin(StackPlugin):
                 "postgres": {
                     "port": 5432,
                     "db": project_name.replace("-", "_"),
-                    "user": "devspeed",
-                    "password": "devspeed",
+                    "user": "krickstart",
+                    "password": "krickstart",
                 },
             },
         }
@@ -49,12 +49,12 @@ class FastAPIPostgresPlugin(StackPlugin):
             "requirements.txt": "fastapi>=0.115,<1\nuvicorn[standard]>=0.34,<1\n",
             "main.py": """from fastapi import FastAPI
 
-app = FastAPI(title="DevSpeed API")
+app = FastAPI(title="krickstart API")
 
 
 @app.get("/")
 def read_root():
-    return {"message": "Your DevSpeed app is running"}
+    return {"message": "Your krickstart app is running"}
 """,
         }
 

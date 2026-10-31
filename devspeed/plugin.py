@@ -1,8 +1,8 @@
-"""Backward-compatibility aliases for devspeed.plugin."""
+"""Backward-compatibility aliases for krickstart.plugin."""
 
 from __future__ import annotations
 
-from slipway.plugin import (
+from krickstart.plugin import (
     ENTRY_POINT_GROUP,
     PLUGIN_API_VERSION,
     PluginError,

@@ -6,7 +6,7 @@ import json
 from collections.abc import Mapping
 from typing import Any
 
-from devspeed.plugins.base import StackPlugin
+from krickstart.plugins.base import StackPlugin
 
 from .common import lifecycle_command, postgres_service_yaml
 
@@ -35,8 +35,8 @@ class NextjsPostgresPlugin(StackPlugin):
                 "postgres": {
                     "port": 5432,
                     "db": project_name.replace("-", "_"),
-                    "user": "devspeed",
-                    "password": "devspeed",
+                    "user": "krickstart",
+                    "password": "krickstart",
                 },
             },
         }
@@ -70,7 +70,7 @@ class NextjsPostgresPlugin(StackPlugin):
             "  return (\n"
             "    <main style={{ padding: '2rem', fontFamily: 'sans-serif' }}>\n"
             f"      <h1>⚡ Welcome to {config['project']}</h1>\n"
-            "      <p>Powered by Next.js & PostgreSQL via <code>devspeed</code>.</p>\n"
+            "      <p>Powered by Next.js & PostgreSQL via <code>krickstart</code>.</p>\n"
             "    </main>\n"
             "  );\n"
             "}\n"
@@ -134,7 +134,7 @@ DATABASE_URL=postgresql://{postgres["user"]}:{postgres["password"]}@localhost:{p
         return [
             "Next.js App Router running at http://localhost:" + str(app_port),
             "PostgreSQL listening on 127.0.0.1:" + str(config["services"]["postgres"]["port"]),
-            "Local environment variables loaded from .env.devspeed",
+            "Local environment variables loaded from .env.krickstart",
         ]
 
 

@@ -1,8 +1,8 @@
-"""Backward-compatibility aliases for devspeed.errors."""
+"""Backward-compatibility aliases for krickstart.errors."""
 
 from __future__ import annotations
 
-from slipway.errors import (
+from krickstart.errors import (
     CommandFailedError,
     ComposeNotFoundError,
     ConfigNotFoundError,

@@ -3,8 +3,8 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from devspeed.plugins.base import StackPlugin
-from devspeed.stacks.common import lifecycle_command, postgres_service_yaml
+from krickstart.plugins.base import StackPlugin
+from krickstart.stacks.common import lifecycle_command, postgres_service_yaml
 
 
 class SpringBootPostgresPlugin(StackPlugin):
@@ -30,8 +30,8 @@ class SpringBootPostgresPlugin(StackPlugin):
                 "postgres": {
                     "port": 5432,
                     "db": "springdb",
-                    "user": "devspeed",
-                    "password": "devspeed",
+                    "user": "krickstart",
+                    "password": "krickstart",
                 },
             },
             "lifecycle": {
@@ -80,7 +80,7 @@ services:
         return [
             "Access your app at http://localhost:8080",
             "Database is available at localhost:5432",
-            "Check logs with 'devspeed logs app'",
+            "Check logs with 'krickstart logs app'",
         ]
 
 

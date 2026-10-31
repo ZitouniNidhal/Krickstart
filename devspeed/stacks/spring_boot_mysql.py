@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from devspeed.plugins.base import StackPlugin
+from krickstart.plugins.base import StackPlugin
 
 from .common import lifecycle_command
 
@@ -34,16 +34,16 @@ class SpringBootMysqlPlugin(StackPlugin):
                 "mysql": {
                     "port": 3306,
                     "db": project_name.replace("-", "_"),
-                    "user": "devspeed",
-                    "password": "devspeed",
+                    "user": "krickstart",
+                    "password": "krickstart",
                 },
             },
         }
 
     def starter_files(self, config: Mapping[str, Any]) -> dict[str, str]:
         return {
-            "pom.xml": '<project xmlns="http://maven.apache.org/POM/4.0.0">\n  <modelVersion>4.0.0</modelVersion>\n  <groupId>com.devspeed</groupId>\n  <artifactId>app</artifactId>\n  <version>0.0.1-SNAPSHOT</version>\n  <dependencies>\n    <dependency>\n      <groupId>org.springframework.boot</groupId>\n      <artifactId>spring-boot-starter-web</artifactId>\n    </dependency>\n    <dependency>\n      <groupId>com.mysql</groupId>\n      <artifactId>mysql-connector-j</artifactId>\n    </dependency>\n  </dependencies>\n</project>',
-            "src/main/java/com/devspeed/Application.java": 'package com.devspeed;\n\nimport org.springframework.boot.SpringApplication;\nimport org.springframework.boot.autoconfigure.SpringBootApplication;\nimport org.springframework.web.bind.annotation.GetMapping;\nimport org.springframework.web.bind.annotation.RestController;\n\n@SpringBootApplication\n@RestController\npublic class Application {\n    public static void main(String[] args) { SpringApplication.run(Application.class, args); }\n\n    @GetMapping("/")\n    public String hello() { return "Your DevSpeed Spring Boot app is running"; }\n}',
+            "pom.xml": '<project xmlns="http://maven.apache.org/POM/4.0.0">\n  <modelVersion>4.0.0</modelVersion>\n  <groupId>com.krickstart</groupId>\n  <artifactId>app</artifactId>\n  <version>0.0.1-SNAPSHOT</version>\n  <dependencies>\n    <dependency>\n      <groupId>org.springframework.boot</groupId>\n      <artifactId>spring-boot-starter-web</artifactId>\n    </dependency>\n    <dependency>\n      <groupId>com.mysql</groupId>\n      <artifactId>mysql-connector-j</artifactId>\n    </dependency>\n  </dependencies>\n</project>',
+            "src/main/java/com/krickstart/Application.java": 'package com.krickstart;\n\nimport org.springframework.boot.SpringApplication;\nimport org.springframework.boot.autoconfigure.SpringBootApplication;\nimport org.springframework.web.bind.annotation.GetMapping;\nimport org.springframework.web.bind.annotation.RestController;\n\n@SpringBootApplication\n@RestController\npublic class Application {\n    public static void main(String[] args) { SpringApplication.run(Application.class, args); }\n\n    @GetMapping("/")\n    public String hello() { return "Your krickstart Spring Boot app is running"; }\n}',
         }
 
     def compose_yaml(self, config: Mapping[str, Any]) -> str:

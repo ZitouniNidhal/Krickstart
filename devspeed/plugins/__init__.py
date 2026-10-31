@@ -1,7 +1,7 @@
-"""Public plugin API for DevSpeed."""
+"""Public plugin API for krickstart."""
 
-from devspeed.plugins.base import PLUGIN_API_VERSION, PluginError, StackPlugin
-from devspeed.plugins.registry import (
+from krickstart.plugins.base import PLUGIN_API_VERSION, PluginError, StackPlugin
+from krickstart.plugins.registry import (
     ENTRY_POINT_GROUP,
     PluginRegistry,
     builtin_registry,

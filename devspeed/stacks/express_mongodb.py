@@ -1,11 +1,9 @@
-"""Express and MongoDB stack plugin."""
-
 from __future__ import annotations
 
 from collections.abc import Mapping
 from typing import Any
 
-from devspeed.plugins.base import StackPlugin
+from krickstart.plugins.base import StackPlugin
 
 from .common import lifecycle_command
 
@@ -33,16 +31,16 @@ class ExpressMongodbPlugin(StackPlugin):
                 "app": {"port": 3000, "node_version": "20"},
                 "mongodb": {
                     "port": 27017,
-                    "user": "devspeed",
-                    "password": "devspeed",
+                    "user": "krickstart",
+                    "password": "krickstart",
                 },
             },
         }
 
     def starter_files(self, config: Mapping[str, Any]) -> dict[str, str]:
         return {
-            "package.json": '{\n  "name": "devspeed-express",\n  "version": "1.0.0",\n  "scripts": { "dev": "node app.js" },\n  "dependencies": { "express": "^4.19.0", "mongoose": "^8.0.0" }\n}',
-            "app.js": 'const express = require("express");\nconst mongoose = require("mongoose");\n\nconst app = express();\nconst port = 3000;\n\nmongoose.connect(process.env.MONGODB_URI).then(() => console.log("Connected to MongoDB"));\n\napp.get("/", (req, res) => res.json({ message: "Your DevSpeed app is running" }));\n\napp.listen(port, () => console.log(`App listening on port ${port}`));',
+            "package.json": '{\n  "name": "krickstart-express",\n  "version": "1.0.0",\n  "scripts": { "dev": "node app.js" },\n  "dependencies": { "express": "^4.19.0", "mongoose": "^8.0.0" }\n}',
+            "app.js": 'const express = require("express");\nconst mongoose = require("mongoose");\n\nconst app = express();\nconst port = 3000;\n\nmongoose.connect(process.env.MONGODB_URI).then(() => console.log("Connected to MongoDB"));\n\napp.get("/", (req, res) => res.json({ message: "Your krickstart app is running" }));\n\napp.listen(port, () => console.log(`App listening on port ${port}`));',
         }
 
     def compose_yaml(self, config: Mapping[str, Any]) -> str:

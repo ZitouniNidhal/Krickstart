@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from devspeed.plugins.base import StackPlugin
+from krickstart.plugins.base import StackPlugin
 
 from .common import lifecycle_command, postgres_service_yaml
 
@@ -37,8 +37,8 @@ class DjangoPostgresPlugin(StackPlugin):
                 "postgres": {
                     "port": 5432,
                     "db": project_name.replace("-", "_"),
-                    "user": "devspeed",
-                    "password": "devspeed",
+                    "user": "krickstart",
+                    "password": "krickstart",
                 },
             },
         }
@@ -59,7 +59,7 @@ if __name__ == "__main__":
             "config/__init__.py": "",
             "config/settings.py": """import os
 
-SECRET_KEY = "devspeed-local-only"
+SECRET_KEY = "krickstart-local-only"
 DEBUG = True
 ROOT_URLCONF = "config.urls"
 ALLOWED_HOSTS = ["*"]
@@ -67,9 +67,9 @@ INSTALLED_APPS = ["django.contrib.contenttypes"]
 MIDDLEWARE = []
 DATABASES = {"default": {
     "ENGINE": "django.db.backends.postgresql",
-    "NAME": os.getenv("POSTGRES_DB", "devspeed"),
-    "USER": os.getenv("POSTGRES_USER", "devspeed"),
-    "PASSWORD": os.getenv("POSTGRES_PASSWORD", "devspeed"),
+    "NAME": os.getenv("POSTGRES_DB", "krickstart"),
+    "USER": os.getenv("POSTGRES_USER", "krickstart"),
+    "PASSWORD": os.getenv("POSTGRES_PASSWORD", "krickstart"),
     "HOST": os.getenv("POSTGRES_HOST", "postgres"),
     "PORT": "5432",
 }}
@@ -78,7 +78,7 @@ DATABASES = {"default": {
 from django.urls import path
 
 
-urlpatterns = [path("", lambda request: JsonResponse({"message": "Your DevSpeed app is running"}))]
+urlpatterns = [path("", lambda request: JsonResponse({"message": "Your krickstart app is running"}))]
 """,
         }
 
