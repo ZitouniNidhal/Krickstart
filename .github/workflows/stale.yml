@@ -14,7 +14,25 @@ jobs:
     steps:
       - uses: actions/stale@v9
         with:
-          stale-issue-message: "This issue has been inactive for 30 days and will be closed soon."
+          # Messages
+          stale-issue-message: "This issue has been inactive for 30 days and will be closed in 7 days if no further activity occurs."
+          close-issue-message: "This issue was closed because it has been inactive for 7 days since being marked as stale."
+          stale-pr-message: "This PR has been inactive for 14 days and will be closed in 7 days if no further activity occurs."
+          close-pr-message: "This PR was closed because it has been inactive for 7 days since being marked as stale."
+          
+          # Délais
           days-before-stale: 30
-          stale-pr-message: "This PR has been inactive for 14 days and will be closed soon."
-          days-before-stale-pr: 14
+          days-before-close: 7
+          days-before-pr-stale: 14
+          days-before-pr-close: 7
+          
+          # Labels
+          stale-issue-label: "stale"
+          stale-pr-label: "stale"
+          
+          # Exceptions (ne pas marquer comme stale)
+          exempt-issue-labels: "pinned,security,in-progress"
+          exempt-pr-labels: "pinned,security,in-progress"
+          
+          # Limites (évite de spammer sur les gros repos)
+          operations-per-run: 100
