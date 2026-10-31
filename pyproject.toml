@@ -1,6 +1,6 @@
 [project]
-name = "devspeed"
-version = "1.1.0"
+name = "slipway"
+version = "1.2.0"
 description = "Lightning-fast local dev environment manager powered by Docker Compose"
 readme = "README.md"
 license = { text = "MIT" }
@@ -8,7 +8,7 @@ requires-python = ">=3.10"
 authors = [
     { name = "Nidhal Zitouni", email = "zitouninidhal@gmail.com" },
 ]
-keywords = ["developer-tools", "docker", "docker-compose", "dev-environment", "dx", "local-development"]
+keywords = ["developer-tools", "docker", "docker-compose", "dev-environment", "dx", "local-development", "slipway"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Console",
@@ -49,26 +49,49 @@ dev = [
 ]
 
 [project.scripts]
-devspeed = "devspeed.cli:main"
+slipway = "slipway.cli:main"
+slip = "slipway.cli:main"
+devspeed = "slipway.cli:deprecated_alias_main"
+
+[project.entry-points."slipway.stacks"]
+node-postgres-redis = "slipway.stacks.node_postgres_redis:plugin"
+fastapi-postgres = "slipway.stacks.fastapi_postgres:plugin"
+django-postgres = "slipway.stacks.django_postgres:plugin"
+flask-postgres = "slipway.stacks.flask_postgres:plugin"
+nextjs-postgres = "slipway.stacks.nextjs_postgres:plugin"
+go-gin-postgres = "slipway.stacks.go_gin_postgres:plugin"
+spring-boot-postgres = "slipway.stacks.spring_boot_postgres:plugin"
+express-mongodb = "slipway.stacks.express_mongodb:plugin"
+spring-boot-mysql = "slipway.stacks.spring_boot_mysql:plugin"
+laravel-mysql = "slipway.stacks.laravel_mysql:plugin"
 
 [project.entry-points."devspeed.stacks"]
-node-postgres-redis = "devspeed.stacks.node_postgres_redis:plugin"
-fastapi-postgres = "devspeed.stacks.fastapi_postgres:plugin"
-django-postgres = "devspeed.stacks.django_postgres:plugin"
-flask-postgres = "devspeed.stacks.flask_postgres:plugin"
-nextjs-postgres = "devspeed.stacks.nextjs_postgres:plugin"
-go-gin-postgres = "devspeed.stacks.go_gin_postgres:plugin"
-spring-boot-postgres = "devspeed.stacks.spring_boot_postgres:plugin"
-express-mongodb = "devspeed.stacks.express_mongodb:plugin"
-spring-boot-mysql = "devspeed.stacks.spring_boot_mysql:plugin"
-laravel-mysql = "devspeed.stacks.laravel_mysql:plugin"
+node-postgres-redis = "slipway.stacks.node_postgres_redis:plugin"
+fastapi-postgres = "slipway.stacks.fastapi_postgres:plugin"
+django-postgres = "slipway.stacks.django_postgres:plugin"
+flask-postgres = "slipway.stacks.flask_postgres:plugin"
+nextjs-postgres = "slipway.stacks.nextjs_postgres:plugin"
+go-gin-postgres = "slipway.stacks.go_gin_postgres:plugin"
+spring-boot-postgres = "slipway.stacks.spring_boot_postgres:plugin"
+express-mongodb = "slipway.stacks.express_mongodb:plugin"
+spring-boot-mysql = "slipway.stacks.spring_boot_mysql:plugin"
+laravel-mysql = "slipway.stacks.laravel_mysql:plugin"
 
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["devspeed", "devspeed.core", "devspeed.plugins", "devspeed.stacks"]
+packages = [
+    "slipway",
+    "slipway.core",
+    "slipway.plugins",
+    "slipway.stacks",
+    "devspeed",
+    "devspeed.core",
+    "devspeed.plugins",
+    "devspeed.stacks",
+]
 
 [tool.black]
 line-length = 100
