@@ -21,8 +21,8 @@ jobs:
           context: .
           push: false
           load: true
-          tags: devspeed:latest
+          tags: krickstart:latest
 
       - name: Test container execution
         run: |
-          docker run --rm devspeed:latest --help
+          docker run --rm krickstart:latest --help

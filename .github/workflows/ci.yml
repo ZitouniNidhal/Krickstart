@@ -41,7 +41,7 @@ jobs:
         run: black --check .
 
       - name: Run Mypy
-        run: mypy devspeed
+        run: mypy krickstart
 
   tests:
     name: Test Suite
@@ -68,7 +68,7 @@ jobs:
           python -m pip install .[dev] pytest pytest-cov
 
       - name: Run Unit Tests with Coverage
-        run: pytest tests/ --cov=devspeed --cov-report=term-missing --cov-report=xml
+        run: pytest tests/ --cov=krickstart --cov-report=term-missing --cov-report=xml
 
       - name: Upload coverage artifact
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
