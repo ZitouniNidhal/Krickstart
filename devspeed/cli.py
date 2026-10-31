@@ -23,7 +23,7 @@ from devspeed.errors import (
 from devspeed.stacks import get_stack, list_stacks
 from devspeed.stacks.common import env_example
 
-console = Console()
+console = Console(legacy_windows=False)
 
 GENERATED_COMPOSE = "docker-compose.devspeed.yml"
 GENERATED_ENV = ".env.devspeed"
@@ -31,7 +31,7 @@ GENERATED_ENV_EXAMPLE = ".env.example"
 
 
 def cmd_list(_args: argparse.Namespace) -> None:
-    table = Table(title="⚡ devspeed stacks", show_header=True, header_style="bold magenta")
+    table = Table(title="devspeed stacks", show_header=True, header_style="bold magenta")
     table.add_column("Stack Name", style="cyan", width=24)
     table.add_column("Description", style="white")
 
@@ -94,7 +94,7 @@ def _create_config(
 def cmd_create(args: argparse.Namespace) -> None:
     console.print(
         Panel(
-            "[bold cyan]⚡ devspeed create[/bold cyan]\nChoose a stack to initialize your environment",
+            "[bold cyan]devspeed create[/bold cyan]\nChoose a stack to initialize your environment",
             expand=False,
         )
     )
@@ -142,6 +142,7 @@ def cmd_validate(_args: argparse.Namespace) -> None:
             print(f"Error: 'stack' must be a string, got {type(stack_name).__name__}")
             sys.exit(1)
         stack = get_stack(stack_name)
+
     except KeyError as e:
         print(f"Validation failed: {e}")
         sys.exit(1)
@@ -244,9 +245,7 @@ def cmd_doctor(args: argparse.Namespace) -> None:
                 checks.append((True, f"Updated stale {GENERATED_COMPOSE}"))
 
     console.print(
-        Panel(
-            "[bold cyan]🔍 devspeed doctor[/bold cyan]\nChecking system prerequisites", expand=False
-        )
+        Panel("[bold cyan]devspeed doctor[/bold cyan]\nChecking system prerequisites", expand=False)
     )
 
     # Use a rich table for the results
@@ -411,6 +410,7 @@ def build_parser():
     parser.add_argument(
         "--debug", action="store_true", help="Show full traceback on unexpected errors"
     )
+
     parser.add_argument("--version", "-v", action="version", version=f"devspeed v{__version__}")
     sub = parser.add_subparsers(dest="command", required=True)
 

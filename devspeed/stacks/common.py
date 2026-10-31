@@ -24,7 +24,8 @@ def postgres_service_yaml(
   postgres:
     image: postgres:16-alpine
     ports:
-      - \"{postgres["port"]}:5432\"
+      - \"127.0.0.1:{postgres["port"]}:5432\"
+
     environment:
       - POSTGRES_DB={postgres["db"]}
       - POSTGRES_USER={postgres["user"]}

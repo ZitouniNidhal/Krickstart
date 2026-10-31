@@ -82,7 +82,8 @@ services:
       - ./:/app
     command: {app_command}
     ports:
-      - "{app["port"]}:{app["port"]}"
+      - "127.0.0.1:{app["port"]}:{app["port"]}"
+
     environment:
       - DATABASE_URL=postgresql://{postgres["user"]}:{postgres["password"]}@postgres:5432/{postgres["db"]}
     depends_on:
