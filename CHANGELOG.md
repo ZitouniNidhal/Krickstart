@@ -1,3 +1,31 @@
+# [1.3.0](https://github.com/ZitouniNidhal/devspeed/compare/v1.2.0...v1.3.0) (2026-10-31)
+
+
+### Features
+
+* add django-postgres stack ([eae763e](https://github.com/ZitouniNidhal/devspeed/commit/eae763e5059a57222954c8827cda9597122409ba))
+* add express-mongodb stack ([2fe14fe](https://github.com/ZitouniNidhal/devspeed/commit/2fe14fe99c0c3bdaebb2d4ac467f4813402c9ec1))
+* add fastapi-postgres stack ([a0ce270](https://github.com/ZitouniNidhal/devspeed/commit/a0ce270c5b09e2034734059f011fc4f1ae47d8db))
+* add flask-postgres stack ([72e1679](https://github.com/ZitouniNidhal/devspeed/commit/72e167956c5b4af3a749eae196af214c472ea0c1))
+* add go-gin-postgres stack ([d0719eb](https://github.com/ZitouniNidhal/devspeed/commit/d0719eb82e75098baf096db7ee654f065b20eb24))
+* add laravel-mysql stack ([41b5223](https://github.com/ZitouniNidhal/devspeed/commit/41b52235cd30c32a88ca153f45876c9df3909f6b))
+* add nextjs-postgres stack ([9297d74](https://github.com/ZitouniNidhal/devspeed/commit/9297d74ca96de7d9dbbfbbd8576767c6ba74b3b7))
+* add node-postgres-redis stack ([cbfe105](https://github.com/ZitouniNidhal/devspeed/commit/cbfe105715486309aa7b4877f60f2e9cebd7be60))
+* add slipway __init__ ([0547bbc](https://github.com/ZitouniNidhal/devspeed/commit/0547bbce982fbadc831fdb9d9d71e9f97344afd1))
+* add slipway cli ([e8a0a68](https://github.com/ZitouniNidhal/devspeed/commit/e8a0a68d61025ae04041aa8195d0793ffbbce6b2))
+* add slipway compose generator ([0c5d371](https://github.com/ZitouniNidhal/devspeed/commit/0c5d37102df5310661e4039a8f72d476ca574314))
+* add slipway config ([e8bc541](https://github.com/ZitouniNidhal/devspeed/commit/e8bc5415b2eeae421415d2acc4ab9281e7d25cd2))
+* add slipway core init ([c54231d](https://github.com/ZitouniNidhal/devspeed/commit/c54231dbe979974535d71fe3343c639c015a2ee9))
+* add slipway errors ([c622f5b](https://github.com/ZitouniNidhal/devspeed/commit/c622f5ba5f71a17f10313cc73e241b1a7a9c6bd8))
+* add slipway plugin ([07eb7ee](https://github.com/ZitouniNidhal/devspeed/commit/07eb7eea0ddc1d57d4c7c2e8c80a367131135b0b))
+* add slipway plugins base ([0366e7a](https://github.com/ZitouniNidhal/devspeed/commit/0366e7a7b62086895d0e879ac6f3eae71bcc3586))
+* add slipway plugins init ([79d2909](https://github.com/ZitouniNidhal/devspeed/commit/79d29093982d1b4db20e252dfca261ffe0426c20))
+* add slipway plugins registry ([bc9530f](https://github.com/ZitouniNidhal/devspeed/commit/bc9530f7f57a6897f921f9bf3b91b4259c5ef852))
+* add slipway stacks common utilities ([947a6d7](https://github.com/ZitouniNidhal/devspeed/commit/947a6d7a26f1bd9cfeeaa892461f6b2f749e6487))
+* add slipway stacks init ([9e8610c](https://github.com/ZitouniNidhal/devspeed/commit/9e8610c030f9e3d3450db61d801cde12837a3bd5))
+* add spring-boot-mysql stack ([9fa1315](https://github.com/ZitouniNidhal/devspeed/commit/9fa131551360a3cb040d844dbc4b27edd3f8ca18))
+* add spring-boot-postgres stack ([06de826](https://github.com/ZitouniNidhal/devspeed/commit/06de8266ffd5b55790ed305afa31e4c32177d4cd))
+
 # [1.2.0](https://github.com/ZitouniNidhal/devspeed/compare/v1.1.0...v1.2.0) (2026-10-31)
 
 
