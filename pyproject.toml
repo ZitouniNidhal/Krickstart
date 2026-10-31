@@ -1,5 +1,5 @@
 [project]
-name = "slipway"
+name = "krickstart"
 version = "1.2.0"
 description = "Lightning-fast local dev environment manager powered by Docker Compose"
 readme = "README.md"
@@ -8,7 +8,7 @@ requires-python = ">=3.10"
 authors = [
     { name = "Nidhal Zitouni", email = "zitouninidhal@gmail.com" },
 ]
-keywords = ["developer-tools", "docker", "docker-compose", "dev-environment", "dx", "local-development", "slipway"]
+keywords = ["developer-tools", "docker", "docker-compose", "dev-environment", "dx", "local-development", "krickstart"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Console",
@@ -30,11 +30,11 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/ZitouniNidhal/devspeed"
-Documentation = "https://github.com/ZitouniNidhal/devspeed#readme"
-Repository = "https://github.com/ZitouniNidhal/devspeed.git"
-Issues = "https://github.com/ZitouniNidhal/devspeed/issues"
-Changelog = "https://github.com/ZitouniNidhal/devspeed/blob/master/ROADMAP.md"
+Homepage = "https://github.com/ZitouniNidhal/Krickstart"
+Documentation = "https://github.com/ZitouniNidhal/Krickstart#readme"
+Repository = "https://github.com/ZitouniNidhal/Krickstart.git"
+Issues = "https://github.com/ZitouniNidhal/Krickstart/issues"
+Changelog = "https://github.com/ZitouniNidhal/Krickstart/blob/master/ROADMAP.md"
 
 [project.optional-dependencies]
 dev = [
@@ -49,33 +49,20 @@ dev = [
 ]
 
 [project.scripts]
-slipway = "slipway.cli:main"
-slip = "slipway.cli:main"
-devspeed = "slipway.cli:deprecated_alias_main"
+krickstart = "krickstart.cli:main"
+devspeed = "devspeed.cli:main"
 
-[project.entry-points."slipway.stacks"]
-node-postgres-redis = "slipway.stacks.node_postgres_redis:plugin"
-fastapi-postgres = "slipway.stacks.fastapi_postgres:plugin"
-django-postgres = "slipway.stacks.django_postgres:plugin"
-flask-postgres = "slipway.stacks.flask_postgres:plugin"
-nextjs-postgres = "slipway.stacks.nextjs_postgres:plugin"
-go-gin-postgres = "slipway.stacks.go_gin_postgres:plugin"
-spring-boot-postgres = "slipway.stacks.spring_boot_postgres:plugin"
-express-mongodb = "slipway.stacks.express_mongodb:plugin"
-spring-boot-mysql = "slipway.stacks.spring_boot_mysql:plugin"
-laravel-mysql = "slipway.stacks.laravel_mysql:plugin"
-
-[project.entry-points."devspeed.stacks"]
-node-postgres-redis = "slipway.stacks.node_postgres_redis:plugin"
-fastapi-postgres = "slipway.stacks.fastapi_postgres:plugin"
-django-postgres = "slipway.stacks.django_postgres:plugin"
-flask-postgres = "slipway.stacks.flask_postgres:plugin"
-nextjs-postgres = "slipway.stacks.nextjs_postgres:plugin"
-go-gin-postgres = "slipway.stacks.go_gin_postgres:plugin"
-spring-boot-postgres = "slipway.stacks.spring_boot_postgres:plugin"
-express-mongodb = "slipway.stacks.express_mongodb:plugin"
-spring-boot-mysql = "slipway.stacks.spring_boot_mysql:plugin"
-laravel-mysql = "slipway.stacks.laravel_mysql:plugin"
+[project.entry-points."krickstart.stacks"]
+node-postgres-redis = "krickstart.stacks.node_postgres_redis:plugin"
+fastapi-postgres = "krickstart.stacks.fastapi_postgres:plugin"
+django-postgres = "krickstart.stacks.django_postgres:plugin"
+flask-postgres = "krickstart.stacks.flask_postgres:plugin"
+nextjs-postgres = "krickstart.stacks.nextjs_postgres:plugin"
+go-gin-postgres = "krickstart.stacks.go_gin_postgres:plugin"
+spring-boot-postgres = "krickstart.stacks.spring_boot_postgres:plugin"
+express-mongodb = "krickstart.stacks.express_mongodb:plugin"
+spring-boot-mysql = "krickstart.stacks.spring_boot_mysql:plugin"
+laravel-mysql = "krickstart.stacks.laravel_mysql:plugin"
 
 [build-system]
 requires = ["setuptools>=61.0"]
@@ -83,10 +70,10 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = [
-    "slipway",
-    "slipway.core",
-    "slipway.plugins",
-    "slipway.stacks",
+    "krickstart",
+    "krickstart.core",
+    "krickstart.plugins",
+    "krickstart.stacks",
     "devspeed",
     "devspeed.core",
     "devspeed.plugins",
