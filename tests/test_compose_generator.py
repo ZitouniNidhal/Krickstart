@@ -10,6 +10,8 @@ from typing import Any
 from unittest.mock import patch
 
 import yaml
+from krickstart.plugins.base import StackPlugin
+from krickstart.plugins.registry import PluginRegistry
 
 from krickstart.core.compose_generator import (
     ComposeGenerationError,
@@ -21,8 +23,6 @@ from krickstart.core.compose_generator import (
     PluginResolutionError,
     PortConflictError,
 )
-from krickstart.plugins.base import StackPlugin
-from krickstart.plugins.registry import PluginRegistry
 
 
 class InvalidYamlPlugin(StackPlugin):
