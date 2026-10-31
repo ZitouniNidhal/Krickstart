@@ -1,6 +1,6 @@
-"""Core generation services for DevSpeed."""
+"""Core generation services for DevSpeed (legacy alias)."""
 
-from devspeed.core.compose_generator import (
+from slipway.core.compose_generator import (
     DEFAULT_COMPOSE_FILENAME,
     DEFAULT_ENV_FILENAME,
     ComposeGenerationError,
