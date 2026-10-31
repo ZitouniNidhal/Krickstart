@@ -78,7 +78,7 @@ spring-boot-mysql = "slipway.stacks.spring_boot_mysql:plugin"
 laravel-mysql = "slipway.stacks.laravel_mysql:plugin"
 
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=84.2.1"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
