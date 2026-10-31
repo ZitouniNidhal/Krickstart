@@ -3,7 +3,7 @@ name = "krickstart"
 version = "1.2.0"
 description = "Lightning-fast local dev environment manager powered by Docker Compose"
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
 requires-python = ">=3.10"
 authors = [
     { name = "Nidhal Zitouni", email = "zitouninidhal@gmail.com" },
