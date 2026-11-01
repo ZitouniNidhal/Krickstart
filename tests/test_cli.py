@@ -194,6 +194,7 @@ class CliTests(unittest.TestCase):
                 with redirect_stdout(output):
                     cli.cmd_validate(Namespace())
                 self.assertIn("Configuration is valid", output.getvalue())
+                self.assertIn("krickstart validate", output.getvalue())
             finally:
                 os.chdir(original_directory)
 

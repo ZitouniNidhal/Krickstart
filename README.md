@@ -195,7 +195,7 @@ We love contributions! Whether it's a new stack template, a bug fix, or document
 ## 📖 Guides
 For detailed instructions, explore our documentation:
 - [🚀 Getting Started](./docs/getting-started.md) - From installation to your first stack.
-- [🛠️ Custom Stacks](./docs/custom-stacks.md) - How to extend devspeed with your own templates.
+- [🛠️ Custom Stacks](./docs/custom-stacks.md) - How to extend krickstart with your own templates.
 - [🔍 Troubleshooting](./docs/troubleshooting.md) - Solving common Docker and config issues.
 
 
