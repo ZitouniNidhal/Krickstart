@@ -6,6 +6,8 @@ from abc import ABC, abstractmethod
 from collections.abc import Mapping
 from typing import Any
 
+PLUGIN_API_VERSION = "1.0"
+
 
 class PluginError(Exception):
     """Erreur liée aux plugins."""
