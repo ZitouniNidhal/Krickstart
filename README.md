@@ -216,15 +216,15 @@ docker run --rm ghcr.io/zitouniNidhal/krickstart:latest --help
 
 This project is licensed under the [MIT License](LICENSE).
 
-
 ---
 
-## Contributors
+## 🤝 Contributors
 
 Thanks to these wonderful people for contributing to Krickstart!
 
-| | | | | | |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| [![strickvl](https://github.com/strickvl.png?size=64)](https://github.com/strickvl)<br/>[strickvl](https://github.com/strickvl) | [![shreyashankar](https://github.com/shreyashankar.png?size=64)](https://github.com/shreyashankar)<br/>[shreyashankar](https://github.com/shreyashankar) | [![mattpocock](https://github.com/mattpocock.png?size=64)](https://github.com/mattpocock)<br/>[mattpocock](https://github.com/mattpocock) | [![christianalfoni](https://github.com/christianalfoni.png?size=64)](https://github.com/christianalfoni)<br/>[christianalfoni](https://github.com/christianalfoni) | [![splincode](https://github.com/splincode.png?size=64)](https://github.com/splincode)<br/>[splincode](https://github.com/splincode) | [![afiaafia](https://github.com/afiaafia.png?size=64)](https://github.com/afiaafia)<br/>[afiaafia](https://github.com/afiaafia) |
+| | | | | |
+|:---:|:---:|:---:|:---:|:---:|
+| [![strickvl](https://github.com/strickvl.png?size=64)](https://github.com/strickvl)<br/>[strickvl](https://github.com/strickvl) | [![shreyashankar](https://github.com/shreyashankar.png?size=64)](https://github.com/shreyashankar)<br/>[shreyashankar](https://github.com/shreyashankar) | [![mattpocock](https://github.com/mattpocock.png?size=64)](https://github.com/mattpocock)<br/>[mattpocock](https://github.com/mattpocock) | [![christianalfoni](https://github.com/christianalfoni.png?size=64)](https://github.com/christianalfoni)<br/>[christianalfoni](https://github.com/christianalfoni) | [![splincode](https://github.com/splincode.png?size=64)](https://github.com/splincode)<br/>[splincode](https://github.com/splincode) |
+| [![afiaafia](https://github.com/afiaafia.png?size=64)](https://github.com/afiaafia)<br/>[afiaafia](https://github.com/afiaafia) | [![ryudantara09](https://github.com/ryudantara09.png?size=64)](https://github.com/ryudantara09)<br/>[ryudantara09](https://github.com/ryudantara09) | [![kgarbacinski](https://github.com/kgarbacinski.png?size=64)](https://github.com/kgarbacinski)<br/>[kgarbacinski](https://github.com/kgarbacinski) | [![matigulin](https://github.com/matigulin.png?size=64)](https://github.com/matigulin)<br/>[matigulin](https://github.com/matigulin) | |
 
 See the full [CONTRIBUTORS.md](CONTRIBUTORS.md) for more details.
