@@ -215,3 +215,16 @@ docker run --rm ghcr.io/zitouniNidhal/krickstart:latest --help
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
+
+
+---
+
+## Contributors
+
+Thanks to these wonderful people for contributing to Krickstart!
+
+| | | | | | |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| [![strickvl](https://github.com/strickvl.png?size=64)](https://github.com/strickvl)<br/>[strickvl](https://github.com/strickvl) | [![shreyashankar](https://github.com/shreyashankar.png?size=64)](https://github.com/shreyashankar)<br/>[shreyashankar](https://github.com/shreyashankar) | [![mattpocock](https://github.com/mattpocock.png?size=64)](https://github.com/mattpocock)<br/>[mattpocock](https://github.com/mattpocock) | [![christianalfoni](https://github.com/christianalfoni.png?size=64)](https://github.com/christianalfoni)<br/>[christianalfoni](https://github.com/christianalfoni) | [![splincode](https://github.com/splincode.png?size=64)](https://github.com/splincode)<br/>[splincode](https://github.com/splincode) | [![afiaafia](https://github.com/afiaafia.png?size=64)](https://github.com/afiaafia)<br/>[afiaafia](https://github.com/afiaafia) |
+
+See the full [CONTRIBUTORS.md](CONTRIBUTORS.md) for more details.
