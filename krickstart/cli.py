@@ -129,7 +129,7 @@ def cmd_validate(_args: argparse.Namespace) -> None:
         print(f"Validation failed: {e}")
         sys.exit(1)
 
-    print("\ndevspeed validate\n")
+    print("\nkrickstart validate\n")
     print(f"  [OK] Configuration file: {cfg.CONFIG_FILENAME}")
     print(f"  [OK] Project name: {config['project']}")
     print(f"  [OK] Stack plugin: {stack.name} ({stack.description})")
@@ -214,7 +214,7 @@ def cmd_doctor(args: argparse.Namespace) -> None:
                 compose_path.write_text(current_compose, encoding="utf-8")
                 checks.append((True, f"Updated stale {GENERATED_COMPOSE}"))
 
-    print("\ndevspeed doctor\n")
+    print("\nkrickstart doctor\n")
     for passed, message in checks:
         print(f"  [{'OK' if passed else '!!'}] {message}")
     if not all(passed for passed, _ in checks):
