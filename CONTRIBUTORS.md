@@ -40,11 +40,35 @@ We welcome contributions of all kinds — code, docs, bug reports, and ideas.
         <sub><b>splincode</b></sub>
       </a>
     </td>
+  </tr>
+  <tr>
     <td align="center">
       <a href="https://github.com/afiaafia">
         <img src="https://github.com/afiaafia.png" width="80px;" alt="afiaafia"/><br />
         <sub><b>afiaafia</b></sub>
       </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/ryudantara09">
+        <img src="https://github.com/ryudantara09.png" width="80px;" alt="ryudantara09"/><br />
+        <sub><b>ryudantara09</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/kgarbacinski">
+        <img src="https://github.com/kgarbacinski.png" width="80px;" alt="kgarbacinski"/><br />
+        <sub><b>kgarbacinski</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/matigulin">
+        <img src="https://github.com/matigulin.png" width="80px;" alt="matigulin"/><br />
+        <sub><b>matigulin</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <!-- Future Contributor -->
+      <sub><b>Join us!</b></sub>
     </td>
   </tr>
 </table>
@@ -62,35 +86,3 @@ Want to see your name here? We'd love your help!
 5. Open a Pull Request
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) before submitting.
-
-
-<!-- strickvl -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
