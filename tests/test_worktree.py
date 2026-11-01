@@ -51,3 +51,4 @@ class WorktreeTests(unittest.TestCase):
             path = Path(temp_dir)
             suffix = worktree.worktree_project_suffix(path)
             self.assertEqual(suffix, worktree.worktree_hash(path))
+
