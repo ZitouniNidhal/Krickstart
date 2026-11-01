@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import pathlib
-import sys
 from typing import Any, Optional
-from krickstart.errors import ConfigValidationError
 
 import yaml
+
+from krickstart.errors import ConfigValidationError
 
 CONFIG_FILENAME = "krickstart.yaml"
 
@@ -17,7 +17,6 @@ def config_path(directory: Optional[pathlib.Path] = None) -> pathlib.Path:  # no
 
 def load_config(directory: Optional[pathlib.Path] = None) -> dict[str, Any]:  # noqa: UP045
     """Charge et valide la configuration depuis krickstart.yaml."""
-    from krickstart.errors import ConfigValidationError
 
     path = config_path(directory)
     if not path.exists():
@@ -49,7 +48,6 @@ def validate_config(config: dict[str, Any]) -> None:
 
     Lève ConfigValidationError si project ou stack n'est pas une string non vide.
     """
-    from krickstart.errors import ConfigValidationError
 
     if not isinstance(config, dict):
         raise ConfigValidationError("Configuration must be a mapping.")

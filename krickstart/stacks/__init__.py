@@ -2,11 +2,6 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from krickstart.plugins.base import StackPlugin
-
 
 def get_registry():
     """Retourne le registre de tous les stacks disponibles."""

@@ -9,9 +9,9 @@ from typing import Any
 
 from krickstart import __version__
 from krickstart import config as cfg
+from krickstart.errors import DockerNotFoundError
 from krickstart.stacks import get_stack, list_stacks
 from krickstart.stacks.common import env_example
-from krickstart.errors import DockerNotFoundError, KrickstartError
 
 GENERATED_COMPOSE = "docker-compose.krickstart.yml"
 GENERATED_ENV = ".env.krickstart"
@@ -99,7 +99,6 @@ def cmd_create(args: argparse.Namespace) -> None:
 
 def _require_docker() -> None:
     """Vérifie que Docker est installé et disponible."""
-    from krickstart.errors import DockerNotFoundError
 
     if shutil.which("docker") is None:
         raise DockerNotFoundError(
