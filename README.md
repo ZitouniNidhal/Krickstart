@@ -203,7 +203,15 @@ For detailed instructions, explore our documentation:
 # Run local test suite and quality gates:
 python scripts/dev.py check
 ```
+---
 
+## 🐳 Docker
+
+```bash
+docker pull ghcr.io/zitouniNidhal/krickstart:latest
+docker run --rm ghcr.io/zitouniNidhal/krickstart:latest --help
+```
+---
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
