@@ -130,6 +130,12 @@ boundaries.
 - Never collect project source, credentials, environment values, or container logs.
 - Provide a simple command to inspect and disable any telemetry configuration.
 
+### Worktree-aware mode (v1.3)
+- Auto-detect Git worktrees via `.git` file
+- Apply `--port-offset` (default: +100 per worktree)
+- Suffix Compose project name with a short hash
+- Command: `krickstart up --worktree`
+
 ## How to participate
 
 The best way to influence the roadmap is to open a focused issue with a user
