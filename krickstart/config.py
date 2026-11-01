@@ -14,12 +14,14 @@ LEGACY_CONFIG_FILENAME = "devspeed.yaml"
 
 class LifecycleConfig(BaseModel):
     """Lifecycle hooks for a stack."""
+
     install: str | None = None
     dev: str | None = None
 
 
 class ServiceConfig(BaseModel):
     """Configuration for a single service (database, cache, etc.)."""
+
     port: int | None = None
     db: str | None = None
     user: str | None = None
@@ -28,6 +30,7 @@ class ServiceConfig(BaseModel):
 
 class KrickstartConfig(BaseModel):
     """Root configuration for krickstart.yaml."""
+
     project: str
     stack: str
     services: dict[str, ServiceConfig] = Field(default_factory=dict)

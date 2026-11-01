@@ -4,6 +4,7 @@ from collections.abc import Mapping
 from typing import Any
 
 from devspeed.plugins.base import StackPlugin
+
 from devspeed.stacks.common import lifecycle_command, postgres_service_yaml
 
 

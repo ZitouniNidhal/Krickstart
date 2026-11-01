@@ -1,4 +1,3 @@
-
 """Base plugin interface for Krickstart stacks."""
 
 from __future__ import annotations

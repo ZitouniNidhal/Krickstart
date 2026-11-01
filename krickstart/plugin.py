@@ -9,7 +9,6 @@ from __future__ import annotations
 import importlib.metadata
 from typing import Any, Protocol, runtime_checkable
 
-
 # Constantes
 ENTRY_POINT_GROUP = "krickstart.stacks"
 PLUGIN_API_VERSION = "1.0"
@@ -75,60 +74,70 @@ def builtin_registry() -> PluginRegistry:
 
     try:
         from krickstart.stacks.fastapi_postgres import plugin as fastapi_plugin
+
         registry.register(fastapi_plugin)
     except ImportError:
         pass
 
     try:
         from krickstart.stacks.django_postgres import plugin as django_plugin
+
         registry.register(django_plugin)
     except ImportError:
         pass
 
     try:
         from krickstart.stacks.node_postgres_redis import plugin as node_plugin
+
         registry.register(node_plugin)
     except ImportError:
         pass
 
     try:
         from krickstart.stacks.flask_postgres import plugin as flask_plugin
+
         registry.register(flask_plugin)
     except ImportError:
         pass
 
     try:
         from krickstart.stacks.nextjs_postgres import plugin as nextjs_plugin
+
         registry.register(nextjs_plugin)
     except ImportError:
         pass
 
     try:
         from krickstart.stacks.go_gin_postgres import plugin as go_plugin
+
         registry.register(go_plugin)
     except ImportError:
         pass
 
     try:
         from krickstart.stacks.spring_boot_postgres import plugin as spring_plugin
+
         registry.register(spring_plugin)
     except ImportError:
         pass
 
     try:
         from krickstart.stacks.express_mongodb import plugin as express_plugin
+
         registry.register(express_plugin)
     except ImportError:
         pass
 
     try:
         from krickstart.stacks.spring_boot_mysql import plugin as spring_mysql_plugin
+
         registry.register(spring_mysql_plugin)
     except ImportError:
         pass
 
     try:
         from krickstart.stacks.laravel_mysql import plugin as laravel_plugin
+
         registry.register(laravel_plugin)
     except ImportError:
         pass
@@ -143,8 +152,13 @@ def discover_pypi_stack_packages() -> list[StackPlugin]:
         try:
             plugin = entry_point.load()
             plugins.append(plugin)
-        except Exception:
-            continue
+        except Exception as exc:  # noqa: BLE001
+            import logging
+
+            logging.getLogger(__name__).warning(
+                "Failed to load plugin %s: %s", entry_point.name, exc
+            )
+        continue
     return plugins
 
 

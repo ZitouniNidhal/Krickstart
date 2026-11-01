@@ -4,16 +4,14 @@ from __future__ import annotations
 
 import argparse
 import sys
-from pathlib import Path
-from typing import Sequence
+from collections.abc import Sequence
 
 from krickstart.config import (
     CONFIG_FILENAME,
-    LEGACY_CONFIG_FILENAME,
+    config_path,
     load_config,
     save_config,
     validate_config,
-    config_path,
 )
 from krickstart.errors import KrickstartError
 from krickstart.plugins.registry import builtin_registry
@@ -137,6 +135,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 def deprecated_alias_main(argv: Sequence[str] | None = None) -> int:
     """Point d'entrée déprécié pour l'alias devspeed."""
     import warnings
+
     warnings.warn(
         "'devspeed' est déprécié. Utilisez 'krickstart'.",
         DeprecationWarning,
