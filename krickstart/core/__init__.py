@@ -1,4 +1,6 @@
-"""Core generation services for krickstart (legacy alias)."""
+"""Core functionality for Krickstart."""
+
+from __future__ import annotations
 
 from krickstart.core.compose_generator import (
     DEFAULT_COMPOSE_FILENAME,
