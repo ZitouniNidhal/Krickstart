@@ -23,16 +23,12 @@ class PluginRegistry:
             raise PluginError(f"Stack inconnu : {name}")
         return self._plugins[name]
 
-    def list(self) -> list[StackPlugin]:
-        """Liste tous les plugins enregistrés."""
+    def all(self) -> list[StackPlugin]:
+        """Retourne tous les plugins enregistrés."""
         return list(self._plugins.values())
 
     def __contains__(self, name: str) -> bool:
         return name in self._plugins
-
-    def all(self) -> list[StackPlugin]:
-        """Alias de list() pour compatibilité."""
-        return list(self._plugins.values())
 
 
 def builtin_registry() -> PluginRegistry:

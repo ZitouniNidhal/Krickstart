@@ -8,6 +8,7 @@ from collections.abc import Sequence
 
 from krickstart.config import (
     CONFIG_FILENAME,
+    KrickstartConfig,
     load_config,
     save_config,
     validate_config,
@@ -66,13 +67,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.command == "list":
             registry = builtin_registry()
             print("Stacks disponibles :")
-            for plugin in registry.list():
+            for plugin in registry.all():
                 print(f"  - {plugin.name}: {plugin.description}")
             return 0
 
         if args.command == "init":
-            from krickstart.config import KrickstartConfig
-
             registry = builtin_registry()
             plugin = registry.get(args.stack)
             config_dict = plugin.default_config(args.name)
@@ -86,12 +85,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             return 0
 
         if args.command == "validate":
-            from krickstart.config import KrickstartConfig
-
-            config_dict = load_config()
-            config = (
-                KrickstartConfig(**config_dict) if isinstance(config_dict, dict) else config_dict
-            )
+            config = load_config()
             validate_config(config)
             print("Configuration valide.")
             return 0
@@ -122,12 +116,6 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         if args.command == "cleanup":
             print("Nettoyage des conteneurs et volumes...")
-            return 0
-
-        if args.command == "validate":
-            config = load_config()
-            validate_config(config)
-            print("Configuration valide.")
             return 0
 
         parser.print_help()

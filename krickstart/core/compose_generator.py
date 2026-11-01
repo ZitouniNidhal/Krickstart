@@ -430,8 +430,8 @@ class ComposeGenerator:
             LOGGER.warning("Configuration rejected before plugin resolution: %s", errors)
             raise ConfigValidationError("invalid krickstart configuration", errors)
         copied = dict(config)
+        services = config.get("services") or {}  # ← ajouter cette ligne
         copied["services"] = {str(key): value for key, value in services.items()}
-        services = config.get("services") or {}
         for service_name, service in copied["services"].items():
             if not service_name or not isinstance(service, Mapping):
                 errors.append(f"services.{service_name} must be a mapping")
