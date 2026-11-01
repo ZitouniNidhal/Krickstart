@@ -231,6 +231,13 @@ class CliTests(unittest.TestCase):
                 self.assertIn("services:", Path("docker-compose.yml").read_text())
             finally:
                 os.chdir(original_directory)
+    def test_cmd_worktree_outputs_status(self):
+        output = StringIO()
+        with redirect_stdout(output):
+            cli.cmd_worktree(Namespace())
+        self.assertIn("krickstart worktree", output.getvalue())
+        self.assertIn("Git worktree active:", output.getvalue())
+
 
 
 if __name__ == "__main__":

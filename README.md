@@ -150,6 +150,7 @@ All maintained stacks feature health checks, volume persistence, and loopback se
 | `krickstart logs [service]` | View or follow service logs (`--follow` supported) |
 | `krickstart export` | Export standalone `docker-compose.yml` and `.env` for production or CI |
 | `krickstart cleanup` | Stop containers, remove named volumes, and clean up generated files |
+| `krickstart worktree` | Display Git worktree environment info and computed port offsets |
 
 ---
 

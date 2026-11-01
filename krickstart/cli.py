@@ -337,6 +337,23 @@ def cmd_export(args: argparse.Namespace) -> None:
     print(f"  - Environment file: {env_out}")
 
 
+def cmd_worktree(_args: argparse.Namespace) -> None:
+    """Display Git worktree diagnostic info and computed port offsets."""
+    from krickstart import worktree
+
+    in_worktree = worktree.is_git_worktree()
+    print("\nkrickstart worktree\n")
+    print(f"  Git worktree active: {'yes' if in_worktree else 'no'}")
+    if in_worktree:
+        hash_val = worktree.worktree_hash()
+        offset = worktree.worktree_port_offset()
+        suffix = worktree.worktree_project_suffix()
+        print(f"  Worktree hash:       {hash_val}")
+        print(f"  Port offset:         +{offset}")
+        print(f"  Project suffix:      -{suffix}")
+    print()
+
+
 def build_parser():
     parser = argparse.ArgumentParser(
         prog="krickstart",
@@ -413,6 +430,11 @@ def build_parser():
     )
     p_export.add_argument("--env-out", default=".env", help="Target env output path")
     p_export.set_defaults(func=cmd_export)
+
+    p_worktree = sub.add_parser(
+        "worktree", help="Inspect Git worktree environment and port offsets"
+    )
+    p_worktree.set_defaults(func=cmd_worktree)
 
     return parser
 
