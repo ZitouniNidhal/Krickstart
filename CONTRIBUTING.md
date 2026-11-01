@@ -1,6 +1,6 @@
-# Contributing to devspeed
+# Contributing to Krickstart
 
-Thank you for helping make local development easier to reproduce. DevSpeed is a
+Thank you for helping make local development easier to reproduce. Krickstart is a
 small tool with a deliberately readable core, so contributions should improve
 clarity for both first-time users and people maintaining a project at scale.
 
@@ -9,8 +9,8 @@ clarity for both first-time users and people maintaining a project at scale.
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/OWNER/devspeed.git
-cd devspeed
+git clone https://github.com/ZitouniNidhal/Krickstart.git
+cd Krickstart
 ```
 
 Replace `OWNER` with the canonical GitHub organization or user once the public
@@ -59,16 +59,16 @@ marked and documented when they are added.
 ### 5. Run quality checks
 
 ```bash
-python -m black --check devspeed tests
-python -m ruff check devspeed tests
-python -m mypy devspeed --ignore-missing-imports
-python -m compileall -q devspeed
+python -m ruff check krickstart tests
+python -m ruff format --check krickstart tests
+python -m mypy krickstart
+python -m compileall -q krickstart
 ```
 
 Before committing a formatting change, run:
 
 ```bash
-python -m black devspeed tests
+python -m ruff format krickstart tests
 ```
 
 ## Coding standards
@@ -109,7 +109,7 @@ side effects. Do not add documentation that merely repeats a variable name.
 
 ## How to add a new stack
 
-A stack is a module in `devspeed/stacks/` that follows the existing public
+A stack is a module in `krickstart/stacks/` that follows the existing public
 shape:
 
 - `NAME: str`
@@ -121,133 +121,11 @@ shape:
 - `post_up_hints(config: dict) -> list[str]`
 
 Newer stacks should implement the `StackPlugin` class in
-`devspeed/plugins/base.py` and export a module-level `plugin` instance. The
+`krickstart/plugins/base.py` and export a module-level `plugin` instance. The
 module-level functions below are retained as compatibility wrappers for older
 stack integrations.
 
-### Example: `flask-postgres`
 
-Create `devspeed/stacks/flask_postgres.py`:
-
-```python
-from __future__ import annotations
-
-from collections.abc import Mapping
-from typing import Any
-
-from devspeed.plugins.base import StackPlugin
-from .common import lifecycle_command, postgres_service_yaml
-
-
-class FlaskPostgresPlugin(StackPlugin):
-    """Provide a hot-reloading Flask application with PostgreSQL."""
-
-    @property
-    def name(self) -> str:
-        """Return the stable configuration identifier."""
-        return "flask-postgres"
-
-    @property
-    def description(self) -> str:
-        """Return the description shown by ``devspeed list``."""
-        return "Python Flask API + Postgres"
-
-    def default_config(self, project_name: str) -> dict[str, Any]:
-        """Return reproducible defaults for a Flask project."""
-        return {
-            "project": project_name,
-            "stack": self.name,
-            "lifecycle": {
-                "install": "pip install --no-cache-dir -r requirements.txt",
-                "dev": "flask --app app run --host 0.0.0.0 --port 5000 --debug",
-            },
-            "services": {
-                "app": {"port": 5000, "python_version": "3.12"},
-                "postgres": {
-                    "port": 5432,
-                    "db": project_name.replace("-", "_"),
-                    "user": "devspeed",
-                    "password": "devspeed",
-                },
-            },
-        }
-
-    def starter_files(self, config: Mapping[str, Any]) -> dict[str, str]:
-        """Return starter files for a minimal Flask API."""
-        return {
-            "requirements.txt": "Flask>=3.1,<4\npsycopg[binary]>=3.2,<4\n",
-            "app.py": """from flask import Flask, jsonify
-
-app = Flask(__name__)
-
-
-@app.get("/")
-def read_root():
-    return jsonify(message="Your DevSpeed app is running")
-""",
-        }
-
-    def compose_yaml(self, config: Mapping[str, Any]) -> str:
-        """Render the application and PostgreSQL Compose services."""
-        services = config["services"]
-        app = services["app"]
-        postgres = services["postgres"]
-        project = config["project"]
-        command = lifecycle_command(
-            config,
-            "pip install --no-cache-dir -r requirements.txt",
-            f"flask --app app run --host 0.0.0.0 --port {app['port']} --debug",
-        )
-        return f"""\
-name: {project}
-
-services:
-  app:
-    image: python:{app["python_version"]}-slim
-    working_dir: /app
-    volumes:
-      - ./:/app
-    command: {command}
-    ports:
-      - "{app["port"]}:{app["port"]}"
-    environment:
-      - DATABASE_URL=postgresql://{postgres["user"]}:{postgres["password"]}@postgres:5432/{postgres["db"]}
-    depends_on:
-      postgres:
-        condition: service_healthy
-
-{postgres_service_yaml(postgres, project)}
-"""
-
-    def env_file(self, config: Mapping[str, Any]) -> str:
-        """Return the host-side PostgreSQL connection URL."""
-        postgres = config["services"]["postgres"]
-        return (
-            f"DATABASE_URL=postgresql://{postgres['user']}:{postgres['password']}"
-            f"@localhost:{postgres['port']}/{postgres['db']}\n"
-        )
-
-    def post_up_hints(self, config: Mapping[str, Any]) -> list[str]:
-        """Return useful notes after the stack starts."""
-        port = config["services"]["app"]["port"]
-        return [
-            "App container installs requirements.txt and runs Flask in debug mode.",
-            f"API should be reachable at http://localhost:{port} once dependencies finish installing.",
-            "Make sure app.py exposes a Flask app named 'app'.",
-        ]
-
-
-plugin = FlaskPostgresPlugin()
-```
-
-Register the plugin in `devspeed/stacks/__init__.py` if it is a built-in stack,
-then add it to the entry-point table in `pyproject.toml` when the project is
-packaged:
-
-```toml
-[project.entry-points."devspeed.stacks"]
-flask-postgres = "devspeed.stacks.flask_postgres:plugin"
-```
 
 ### Stack checklist
 
