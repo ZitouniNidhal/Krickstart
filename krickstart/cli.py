@@ -8,7 +8,6 @@ from collections.abc import Sequence
 
 from krickstart.config import (
     CONFIG_FILENAME,
-    config_path,
     load_config,
     save_config,
     validate_config,
@@ -72,9 +71,12 @@ def main(argv: Sequence[str] | None = None) -> int:
             return 0
 
         if args.command == "init":
+            from krickstart.config import KrickstartConfig
+
             registry = builtin_registry()
             plugin = registry.get(args.stack)
-            config = plugin.default_config(args.name)
+            config_dict = plugin.default_config(args.name)
+            config = KrickstartConfig(**config_dict)
             save_config(config)
             print(f"Créé {CONFIG_FILENAME} pour le stack : {args.stack}")
             return 0
@@ -83,11 +85,15 @@ def main(argv: Sequence[str] | None = None) -> int:
             print("Assistant interactif — veuillez choisir un stack.")
             return 0
 
-        if args.command == "doctor":
-            print("✓ Docker : OK")
-            print(f"✓ Config : {config_path()}")
-            if args.fix:
-                print("✓ Réparation appliquée")
+        if args.command == "validate":
+            from krickstart.config import KrickstartConfig
+
+            config_dict = load_config()
+            config = (
+                KrickstartConfig(**config_dict) if isinstance(config_dict, dict) else config_dict
+            )
+            validate_config(config)
+            print("Configuration valide.")
             return 0
 
         if args.command == "up":

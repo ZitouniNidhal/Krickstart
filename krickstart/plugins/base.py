@@ -44,5 +44,9 @@ class StackPlugin(ABC):
         """Fichiers de démarrage pour un nouveau projet (optionnel)."""
         return {}
 
+    def validate(self) -> None:
+        """Valide la config (optionnel)."""
+        return
+
 
 __all__ = ["PluginError", "StackPlugin"]

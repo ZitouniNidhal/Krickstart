@@ -30,6 +30,10 @@ class PluginRegistry:
     def __contains__(self, name: str) -> bool:
         return name in self._plugins
 
+    def all(self) -> list[StackPlugin]:
+        """Alias de list() pour compatibilité."""
+        return list(self._plugins.values())
+
 
 def builtin_registry() -> PluginRegistry:
     """Charge et retourne le registre de tous les stacks intégrés."""

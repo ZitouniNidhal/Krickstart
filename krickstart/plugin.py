@@ -167,9 +167,9 @@ def pypi_package_metadata(package_name: str) -> dict[str, Any]:
     try:
         metadata = importlib.metadata.metadata(package_name)
         return {
-            "name": metadata.get("Name", package_name),
-            "version": metadata.get("Version", "unknown"),
-            "description": metadata.get("Summary", ""),
+            "name": metadata.get("Name", package_name),  # type: ignore[attr-defined]
+            "version": metadata.get("Version", "unknown"),  # type: ignore[attr-defined]
+            "description": metadata.get("Summary", ""),  # type: ignore[attr-defined]
         }
     except importlib.metadata.PackageNotFoundError:
         return {"name": package_name, "version": "not installed", "description": ""}
