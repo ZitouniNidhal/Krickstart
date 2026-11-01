@@ -1,0 +1,28 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      
+      - name: Install dependencies
+        run: pip install pip-audit bandit
+
+      # 1. Vérifie les failles dans les dépendances (pydantic, pyyaml, etc.)
+      - name: Run pip-audit
+        run: pip-audit
+
+      # 2. Vérifie les failles dans TON code (ex: injection de commande, shell=True)
+      - name: Run bandit
+        run: bandit -r krickstart/
